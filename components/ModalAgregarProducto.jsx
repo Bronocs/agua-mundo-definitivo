@@ -10,10 +10,11 @@ const productosDB = [
   { nombre: 'DETERGENTE', codigo: '87541230', unidad: 'BALDE' }
 ];
 
-export default function ModalAgregarProducto({ onClose, onAgregar, modoLibre }) {
+export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [busqueda, setBusqueda] = useState('');
   const [resultados, setResultados] = useState([]);
   const [seleccionado, setSeleccionado] = useState(null);
+  const [modoLibre, setModoLibre] = useState(false);
   const [cantidad, setCantidad] = useState('');
   const [comentario, setComentario] = useState('');
   const [nombreLibre, setNombreLibre] = useState('');
@@ -57,13 +58,11 @@ export default function ModalAgregarProducto({ onClose, onAgregar, modoLibre }) 
             </div>
 
             <button className={styles.btnLibre} onClick={() => {
-                    setSeleccionado(null);
-                    setNombreLibre('');
-                    setUnidadLibre('');
-                    setCantidad('');
-                    setComentario('');
-                    setBusqueda('');
-                    setResultados([]);}}>
+              setModoLibre(true);
+              setSeleccionado(null);
+              setBusqueda('');
+              setResultados([]);
+            }}>
               + LIBRE
             </button>
 
@@ -85,7 +84,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar, modoLibre }) 
           </>
         )}
 
-        {(seleccionado || nombreLibre !== '') && (
+        {(modoLibre || seleccionado) && (
           <div className={styles.formulario}>
             {modoLibre && (
               <>
