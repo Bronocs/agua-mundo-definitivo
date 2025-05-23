@@ -16,6 +16,8 @@ export default function ModalAgregarProducto({ onClose, onAgregar, modoLibre }) 
   const [seleccionado, setSeleccionado] = useState(null);
   const [cantidad, setCantidad] = useState('');
   const [comentario, setComentario] = useState('');
+  const [nombreLibre, setNombreLibre] = useState('');
+  const [unidadLibre, setUnidadLibre] = useState('');
 
   const filtrar = (texto) => {
     const filtro = productosDB.filter(p =>
@@ -26,8 +28,11 @@ export default function ModalAgregarProducto({ onClose, onAgregar, modoLibre }) 
   };
 
   const handleSubmit = () => {
-    if (seleccionado || modoLibre) {
-      onAgregar({ ...seleccionado, cantidad, comentario });
+    const producto = modoLibre
+      ? { nombre: nombreLibre, unidad: unidadLibre, cantidad, comentario }
+      : { ...seleccionado, cantidad, comentario };
+    if ((modoLibre && nombreLibre && unidadLibre && cantidad) || (!modoLibre && seleccionado && cantidad)) {
+      onAgregar(producto);
       onClose();
     }
   };
@@ -75,15 +80,31 @@ export default function ModalAgregarProducto({ onClose, onAgregar, modoLibre }) 
 
         {(modoLibre || seleccionado) && (
           <div className={styles.formulario}>
-            <p><strong>{seleccionado?.nombre}</strong></p>
+            {modoLibre && (
+              <>
+                <input
+                  type="text"
+                  placeholder="Nombre del producto"
+                  value={nombreLibre}
+                  onChange={(e) => setNombreLibre(e.target.value)}
+                />
+                <input
+                  type="text"
+                  placeholder="Unidad (ej: KG, UND...)"
+                  value={unidadLibre}
+                  onChange={(e) => setUnidadLibre(e.target.value)}
+                />
+              </>
+            )}
+            {!modoLibre && <p><strong>{seleccionado?.nombre}</strong></p>}
             <input
               type="number"
               placeholder="Cantidad"
               value={cantidad}
               onChange={(e) => setCantidad(e.target.value)}
             />
-            <input
-              type="text"
+            <textarea
+              name="comentario"
               placeholder="Comentario (opcional)"
               value={comentario}
               onChange={(e) => setComentario(e.target.value)}
