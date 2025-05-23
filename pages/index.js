@@ -24,7 +24,7 @@ export default function Home() {
       {materiales.length === 0 ? (
         <p className={styles.sinDatos}>Sin datos</p>
       ) : (
-        <ul>
+        <ul className={styles.materialesLista}>
           {materiales.map((item, i) => (
             <li key={i}>
               {item.nombre} - {item.cantidad} {item.unidad} {item.comentario && `(${item.comentario})`}

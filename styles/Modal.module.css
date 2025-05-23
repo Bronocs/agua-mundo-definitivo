@@ -99,7 +99,7 @@
   word-break: break-word;
 }
 
-.materiales-lista li {
+.materialesLista li {
   max-width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
