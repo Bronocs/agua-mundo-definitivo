@@ -74,8 +74,16 @@
 }
 
 .formulario textarea[name="comentario"] {
-  height: 4rem;
+  min-height: 4rem;
   resize: vertical;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .textarea {
@@ -85,8 +93,20 @@
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  resize: vertical;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
+.materiales-lista li {
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  word-break: break-word;
+  margin-bottom: 0.5rem;
+}
 
 .btnLibre,
 .btnAgregar,
@@ -119,6 +139,8 @@
 .sinDatos {
   text-align: center;
   color: #999;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 @media (min-width: 768px) {
