@@ -57,6 +57,16 @@
   font-size: 1rem;
 }
 
+.materialesLista li {
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  word-break: break-word;
+  margin-bottom: 0.5rem;
+}
+
+
 .modalBotones {
   display: flex;
   justify-content: space-between;
