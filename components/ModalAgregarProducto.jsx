@@ -56,7 +56,14 @@ export default function ModalAgregarProducto({ onClose, onAgregar, modoLibre }) 
               />
             </div>
 
-            <button className={styles.btnLibre} onClick={() => setSeleccionado({ nombre: 'LIBRE', codigo: 'manual', unidad: '' })}>
+            <button className={styles.btnLibre} onClick={() => {
+                    setSeleccionado(null);
+                    setNombreLibre('');
+                    setUnidadLibre('');
+                    setCantidad('');
+                    setComentario('');
+                    setBusqueda('');
+                    setResultados([]);}}>
               + LIBRE
             </button>
 
@@ -78,7 +85,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar, modoLibre }) 
           </>
         )}
 
-        {(modoLibre || seleccionado) && (
+        {(seleccionado || nombreLibre !== '') && (
           <div className={styles.formulario}>
             {modoLibre && (
               <>
