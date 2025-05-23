@@ -87,12 +87,14 @@ export default function ModalAgregarProducto({ onClose, onAgregar, modoLibre }) 
                   placeholder="Nombre del producto"
                   value={nombreLibre}
                   onChange={(e) => setNombreLibre(e.target.value)}
+                  required
                 />
                 <input
                   type="text"
                   placeholder="Unidad (ej: KG, UND...)"
                   value={unidadLibre}
                   onChange={(e) => setUnidadLibre(e.target.value)}
+                  required
                 />
               </>
             )}
@@ -102,6 +104,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar, modoLibre }) 
               placeholder="Cantidad"
               value={cantidad}
               onChange={(e) => setCantidad(e.target.value)}
+              required
             />
             <textarea
               name="comentario"
