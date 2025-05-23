@@ -121,8 +121,15 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
               onChange={(e) => setCantidad(e.target.value)}
               required
             />
-            <textarea name="comentario" className={styles.textarea} style={{ resize: 'none', overflow: 'hidden' }}
+            <textarea
+            name="comentario"
+            className={styles.textarea}
+            placeholder="Comentario (opcional)"
+            value={comentario}
+            onChange={(e) => setComentario(e.target.value)}
+            ref={comentarioRef}
             />
+
             <button className={styles.btnAgregar} onClick={handleSubmit}>Agregar</button>
           </div>
         )}
