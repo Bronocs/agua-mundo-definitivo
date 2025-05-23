@@ -1,5 +1,5 @@
 // components/ModalAgregarProducto.jsx
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styles from '../styles/Modal.module.css';
 
 // Simulación de base de datos local
@@ -19,6 +19,15 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [comentario, setComentario] = useState('');
   const [nombreLibre, setNombreLibre] = useState('');
   const [unidadLibre, setUnidadLibre] = useState('');
+
+  const comentarioRef = useRef(null);
+
+  useEffect(() => {
+    if (comentarioRef.current) {
+      comentarioRef.current.style.height = 'auto';
+      comentarioRef.current.style.height = comentarioRef.current.scrollHeight + 'px';
+    }
+  }, [comentario]);
 
   const filtrar = (texto) => {
     const filtro = productosDB.filter(p =>
@@ -117,6 +126,9 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
               placeholder="Comentario (opcional)"
               value={comentario}
               onChange={(e) => setComentario(e.target.value)}
+              ref={comentarioRef}
+              rows={1}
+              style={{ resize: 'none', overflow: 'hidden' }}
             />
             <button className={styles.btnAgregar} onClick={handleSubmit}>Agregar</button>
           </div>
