@@ -2,16 +2,9 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from '../styles/Modal.module.css';
 
-// Simulación de base de datos local
-const productosDB = [
-  { nombre: 'TRAPO INDUSTRIAL', codigo: '32005362', unidad: 'KG' },
-  { nombre: 'CLORO INDUSTRIAL', codigo: '32004555', unidad: 'PACK' },
-  { nombre: 'BOLSA NEGRA', codigo: '15002341', unidad: 'UND' },
-  { nombre: 'DETERGENTE', codigo: '87541230', unidad: 'BALDE' }
-];
-
 export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [busqueda, setBusqueda] = useState('');
+  const [productos, setProductos] = useState([]);
   const [resultados, setResultados] = useState([]);
   const [seleccionado, setSeleccionado] = useState(null);
   const [modoLibre, setModoLibre] = useState(false);
@@ -23,19 +16,33 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const comentarioRef = useRef(null);
 
   useEffect(() => {
+    async function cargarProductos() {
+      try {
+        const res = await fetch('/api/productos');
+        const data = await res.json();
+        setProductos(data);
+      } catch (error) {
+        console.error('Error al cargar productos:', error);
+      }
+    }
+
+    if (!modoLibre) cargarProductos();
+  }, [modoLibre]);
+
+  useEffect(() => {
     if (comentarioRef.current) {
       comentarioRef.current.style.height = 'auto';
       comentarioRef.current.style.height = comentarioRef.current.scrollHeight + 'px';
     }
   }, [comentario]);
 
-  const filtrar = (texto) => {
-    const filtro = productosDB.filter(p =>
-      p.nombre.toLowerCase().includes(texto.toLowerCase()) ||
-      p.codigo.includes(texto)
+  useEffect(() => {
+    const filtro = productos.filter(p =>
+      p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+      p.codigo.includes(busqueda)
     );
     setResultados(filtro);
-  };
+  }, [busqueda, productos]);
 
   const handleSubmit = () => {
     const producto = modoLibre
@@ -59,10 +66,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
                 type="text"
                 placeholder="Buscar producto por nombre o código"
                 value={busqueda}
-                onChange={(e) => {
-                  setBusqueda(e.target.value);
-                  filtrar(e.target.value);
-                }}
+                onChange={(e) => setBusqueda(e.target.value)}
               />
             </div>
 
@@ -122,12 +126,12 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
               required
             />
             <textarea
-            name="comentario"
-            className={styles.textarea}
-            placeholder="Comentario (opcional)"
-            value={comentario}
-            onChange={(e) => setComentario(e.target.value)}
-            ref={comentarioRef}
+              name="comentario"
+              className={styles.textarea}
+              placeholder="Comentario (opcional)"
+              value={comentario}
+              onChange={(e) => setComentario(e.target.value)}
+              ref={comentarioRef}
             />
 
             <button className={styles.btnAgregar} onClick={handleSubmit}>Agregar</button>
