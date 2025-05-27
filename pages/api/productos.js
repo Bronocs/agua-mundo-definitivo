@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     const sheets = google.sheets({ version: 'v4', auth });
 
     const spreadsheetId = '1EdrOABPCEopWxMDAMgURrIZUoCnWNxZqwjQLaqhUGx0'; // reemplaza esto
-    const range = 'SKUs!A2:A'; // ajusta según tus columnas
+    const range = 'SKUs!A2:C'; // ajusta según tus columnas
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
