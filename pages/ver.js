@@ -23,34 +23,26 @@ export default function VerOrdenes() {
   }, []);
 
   return (
-    <div className={styles.contenedor}>
-      <h1>Órdenes Registradas</h1>
-      {cargando ? (
-        <p>Cargando órdenes...</p>
-      ) : ordenes.length === 0 ? (
-        <p>No hay órdenes registradas.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Nombre</th>
-              <th>Unidad</th>
-              <th>Cantidad</th>
-              <th>Comentario</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ordenes.map((orden, i) => (
-              <tr key={i}>
-                {orden.map((celda, j) => (
-                  <td key={j}>{celda}</td>
-                ))}
-              </tr>
+    <table className={styles.tabla}>
+      <thead>
+        <tr>
+          <th className={styles.celda + ' ' + styles.encabezado}>Fecha</th>
+          <th className={styles.celda + ' ' + styles.encabezado}>Nombre</th>
+          <th className={styles.celda + ' ' + styles.encabezado}>Unidad</th>
+          <th className={styles.celda + ' ' + styles.encabezado}>Cantidad</th>
+          <th className={styles.celda + ' ' + styles.encabezado}>Comentario</th>
+        </tr>
+      </thead>
+      <tbody>
+        {ordenes.map((orden, i) => (
+          <tr key={i}>
+            {orden.map((celda, j) => (
+              <td key={j} className={styles.celda}>{celda}</td>
             ))}
-          </tbody>
-        </table>
-      )}
-    </div>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
   );
 }

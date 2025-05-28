@@ -19,20 +19,20 @@
   flex-wrap: wrap;
 }
 
-.table {
+.tabla {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
 }
 
-.th, td {
+.encabezado {
+  background-color: #f5f5f5;
+}
+
+.celda {
   border: 1px solid #ddd;
   padding: 0.75rem;
   text-align: left;
-}
-
-.th {
-  background-color: #f5f5f5;
 }
 
 
