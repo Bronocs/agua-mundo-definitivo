@@ -11,6 +11,28 @@ export default function Home() {
     setMateriales([...materiales, producto]);
   };
 
+  const enviarPedidos = async () => {
+    try {
+      const res = await fetch('/api/guardar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productos: materiales })
+      });
+
+      if (res.ok) {
+        alert('Pedido enviado exitosamente');
+        setMateriales([]); // limpia la lista si quieres
+      } else {
+        alert('Error al enviar el pedido');
+      }
+    } catch (err) {
+      console.error('Error al enviar:', err);
+      alert('Error de conexión');
+    }
+  };
+
   return (
     <div className={styles.contenedor}>
       <h2>Pedido de Materiales</h2>
@@ -18,7 +40,7 @@ export default function Home() {
       <div className={styles.botones}>
         <button onClick={() => setMostrarModal(true)}>➕</button>
         <button>📄</button>
-        <button onClick={() => alert("Enviar por correo")}>➡️</button>
+        <button onClick={enviarPedidos}>➡️</button>
       </div>
 
       {materiales.length === 0 ? (
