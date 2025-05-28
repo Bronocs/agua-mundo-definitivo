@@ -2,15 +2,14 @@
 import { google } from 'googleapis';
 
 function generarNumeroOrden() {
-  const fecha = new Date();
-  // OC-YYYYMMDD-XXXX (XXXX = 4 dígitos aleatorios)
-  const fechaStr = fecha
+  const ahora = new Date();
+  const fechaStr = ahora
     .toISOString()
-    .slice(0, 10)
-    .replace(/-/g, '');
-  const random = Math.floor(1000 + Math.random() * 9000);
-  return `OP-${fechaStr}-${random}`;
+    .replace(/[-:T.Z]/g, '') // 20240528T181258.123Z → 20240528181258123
+    .slice(0, 15); // YYYYMMDDHHMMSSmmm (hasta milisegundos)
+  return `OP-${fechaStr}`;
 }
+
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
