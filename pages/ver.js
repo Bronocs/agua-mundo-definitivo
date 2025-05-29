@@ -18,9 +18,6 @@ export default function VerOrdenes() {
     fetchOrdenes();
   }, []);
 
-  // Normaliza el estado
-  const estadoNormalizado = (estado || "").trim().toLowerCase();
-
   // ... (agrupa y filtra las órdenes como ya hacías)
   const agrupado = {};
   ordenes.forEach(row => {
@@ -36,6 +33,10 @@ export default function VerOrdenes() {
     }
     agrupado[numeroOrden].productos.push({ nombre, unidad, cantidad, comentario });
   });
+
+  // Normaliza el estado
+  const estadoNormalizado = (estado || "").trim().toLowerCase();
+
   const listaOC = Object.entries(agrupado)
     .filter(([, info]) => (verEntregadas ? info.estado === 'entregada' : info.estado !== 'entregada'));
 
