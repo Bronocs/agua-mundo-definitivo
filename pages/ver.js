@@ -76,7 +76,7 @@ export default function VerOrdenes() {
         {verEntregadas ? "Ver Pendientes" : "Ver Entregadas"}
       </button>
       {listaOC.length === 0 ? (
-        <p>No hay órdenes registradas.</p>
+        <p>Cargando...</p>
       ) : (
         listaOC.map(([oc, info], idx) => (
           <div key={oc} style={{
