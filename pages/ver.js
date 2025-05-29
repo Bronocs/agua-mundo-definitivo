@@ -33,6 +33,7 @@ export default function VerOrdenes() {
 
   // Filtrar por estado
   const listaOC = Object.entries(agrupado)
+    console.log(info.estado)
     .filter(([, info]) => (verEntregadas ? info.estado === 'entregada' : info.estado !== 'entregada'));
 
   const cambiarEstadoOC = async (numeroOrden, nuevoEstado) => {
