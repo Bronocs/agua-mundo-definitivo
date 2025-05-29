@@ -6,16 +6,19 @@ export default function VerOrdenes() {
   const [abierto, setAbierto] = useState(null);
   const [verEntregadas, setVerEntregadas] = useState(false);
 
+  // 1. Define fetchOrdenes como función reutilizable
+  const fetchOrdenes = async () => {
+    const res = await fetch('/api/ver-ordenes');
+    const data = await res.json();
+    setOrdenes(data);
+  };
+
+  // 2. Llama fetchOrdenes al montar
   useEffect(() => {
-    async function fetchOrdenes() {
-      const res = await fetch('/api/ver-ordenes');
-      const data = await res.json();
-      setOrdenes(data);
-    }
     fetchOrdenes();
   }, []);
 
-  // Agrupar por OC y añadir estado
+  // ... (agrupa y filtra las órdenes como ya hacías)
   const agrupado = {};
   ordenes.forEach(row => {
     const [numeroOrden, nombreProyecto, fecha, nombre, unidad, cantidad, comentario, estado, fechaEntrega] = row;
@@ -30,13 +33,12 @@ export default function VerOrdenes() {
     }
     agrupado[numeroOrden].productos.push({ nombre, unidad, cantidad, comentario });
   });
-
-  // Filtrar por estado
   const listaOC = Object.entries(agrupado)
     
     .filter(([, info]) => (verEntregadas ? info.estado === 'entregada' : info.estado !== 'entregada'));
     console.log(info.estado)
 
+  // 3. Usa fetchOrdenes luego de cambiar estado
   const cambiarEstadoOC = async (numeroOrden, nuevoEstado) => {
     const res = await fetch('/api/cambiar-estado', {
       method: 'POST',
@@ -45,7 +47,7 @@ export default function VerOrdenes() {
     });
     if (res.ok) {
       alert('Estado actualizado');
-      window.location.reload();
+      fetchOrdenes(); // ¡Ahora sí refresca con los nuevos datos!
     } else {
       alert('Error actualizando estado');
     }
