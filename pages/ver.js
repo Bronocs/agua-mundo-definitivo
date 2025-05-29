@@ -34,9 +34,8 @@ export default function VerOrdenes() {
     agrupado[numeroOrden].productos.push({ nombre, unidad, cantidad, comentario });
   });
   const listaOC = Object.entries(agrupado)
-    
-    .filter(([, info]) => (verEntregadas ? info.estado === 'entregada' : info.estado !== 'entregada'));
-    console.log(info.estado)
+    .filter(([, info]) => {console.log('Estado:', info.estado); 
+                          verEntregadas ? info.estado === 'entregada' : info.estado !== 'entregada'});
 
   // 3. Usa fetchOrdenes luego de cambiar estado
   const cambiarEstadoOC = async (numeroOrden, nuevoEstado) => {
