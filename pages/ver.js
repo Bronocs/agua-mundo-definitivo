@@ -18,6 +18,9 @@ export default function VerOrdenes() {
     fetchOrdenes();
   }, []);
 
+  // Normaliza el estado
+  const estadoNormalizado = (estado || "").trim().toLowerCase();
+
   // ... (agrupa y filtra las órdenes como ya hacías)
   const agrupado = {};
   ordenes.forEach(row => {
@@ -26,7 +29,7 @@ export default function VerOrdenes() {
       agrupado[numeroOrden] = {
         proyecto: nombreProyecto,
         fecha,
-        estado: estado || "pendiente",
+        estado: estadoNormalizado,
         fechaEntrega: fechaEntrega || "",
         productos: []
       };
@@ -34,8 +37,7 @@ export default function VerOrdenes() {
     agrupado[numeroOrden].productos.push({ nombre, unidad, cantidad, comentario });
   });
   const listaOC = Object.entries(agrupado)
-    .filter(([, info]) => {console.log('Estado:', info.estado); 
-                          verEntregadas ? info.estado === 'entregada' : info.estado !== 'entregada'});
+    .filter(([, info]) => (verEntregadas ? info.estado === 'entregada' : info.estado !== 'entregada'));
 
   // 3. Usa fetchOrdenes luego de cambiar estado
   const cambiarEstadoOC = async (numeroOrden, nuevoEstado) => {
