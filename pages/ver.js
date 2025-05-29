@@ -18,7 +18,7 @@ export default function VerOrdenes() {
   // Agrupar por OC y añadir estado
   const agrupado = {};
   ordenes.forEach(row => {
-    const [numeroOrden, nombreProyecto, fecha, nombre, unidad, cantidad, comentario, estado] = row;
+    const [numeroOrden, nombreProyecto, fecha, nombre, unidad, cantidad, comentario, estado, fechaEntrega] = row;
     if (!agrupado[numeroOrden]) {
       agrupado[numeroOrden] = {
         proyecto: nombreProyecto,
