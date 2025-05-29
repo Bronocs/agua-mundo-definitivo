@@ -22,6 +22,10 @@ export default function VerOrdenes() {
   const agrupado = {};
   ordenes.forEach(row => {
     const [numeroOrden, nombreProyecto, fecha, nombre, unidad, cantidad, comentario, estado, fechaEntrega] = row;
+
+    // Normaliza el estado
+    const estadoNormalizado = (estado || "").trim().toLowerCase();
+
     if (!agrupado[numeroOrden]) {
       agrupado[numeroOrden] = {
         proyecto: nombreProyecto,
@@ -34,8 +38,6 @@ export default function VerOrdenes() {
     agrupado[numeroOrden].productos.push({ nombre, unidad, cantidad, comentario });
   });
 
-  // Normaliza el estado
-  const estadoNormalizado = (estado || "").trim().toLowerCase();
 
   const listaOC = Object.entries(agrupado)
     .filter(([, info]) => (verEntregadas ? info.estado === 'entregada' : info.estado !== 'entregada'));
