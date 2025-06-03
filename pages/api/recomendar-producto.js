@@ -1,6 +1,4 @@
-// pages/api/recomendar-producto.js
 import OpenAI from "openai";
-
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export default async function handler(req, res) {
@@ -23,6 +21,12 @@ Solo responde la lista de sugerencias.
   `.trim();
 
   try {
+    // IMPORTANTE: para debug, revisa si la key existe
+    if (!process.env.OPENAI_API_KEY) {
+      console.error("OPENAI_API_KEY NO ESTÁ DEFINIDA");
+      return res.status(500).json({ sugerencias: "No hay API Key configurada" });
+    }
+
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: prompt }],
@@ -35,6 +39,6 @@ Solo responde la lista de sugerencias.
     });
   } catch (e) {
     console.error("Error con OpenAI:", e);
-    res.status(500).json({ sugerencias: "No se pudo obtener sugerencias." });
+    res.status(500).json({ sugerencias: "No se pudo obtener sugerencias. " + (e?.message || '') });
   }
 }
