@@ -12,6 +12,8 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [comentario, setComentario] = useState('');
   const [nombreLibre, setNombreLibre] = useState('');
   const [unidadLibre, setUnidadLibre] = useState('');
+  const [sugerencias, setSugerencias] = useState('');
+  const [cargandoSugerencias, setCargandoSugerencias] = useState(false);
 
   const comentarioRef = useRef(null);
 
@@ -25,7 +27,6 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
         console.error('Error al cargar productos:', error);
       }
     }
-
     if (!modoLibre) cargarProductos();
   }, [modoLibre]);
 
@@ -36,12 +37,38 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
     }
   }, [comentario]);
 
+  // Nueva lógica: busca sugerencias cuando no hay resultados
   useEffect(() => {
     const filtro = productos.filter(p =>
       p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
       p.codigo.includes(busqueda)
     );
     setResultados(filtro);
+
+    // Si no hay resultados y la búsqueda es relevante, consulta a ChatGPT
+    if (busqueda.length > 2 && filtro.length === 0) {
+      setCargandoSugerencias(true);
+      fetch('/api/recomendar-producto', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          consulta: busqueda,
+          productos
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        setSugerencias(data.sugerencias);
+        setCargandoSugerencias(false);
+      })
+      .catch(() => {
+        setSugerencias('No se pudo obtener sugerencias');
+        setCargandoSugerencias(false);
+      });
+    } else {
+      setSugerencias('');
+      setCargandoSugerencias(false);
+    }
   }, [busqueda, productos]);
 
   const handleSubmit = () => {
@@ -76,6 +103,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
               setSeleccionado(null);
               setBusqueda('');
               setResultados([]);
+              setSugerencias('');
             }}>
               + LIBRE
             </button>
@@ -95,6 +123,16 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
                 ))
               )}
             </div>
+
+            {/* SUGERENCIAS DE CHATGPT */}
+            {!resultados.length && sugerencias && (
+              <div className={styles.sugerencias}>
+                <strong>¿Quizás buscabas?</strong>
+                <div>
+                  {cargandoSugerencias ? 'Consultando a la IA...' : sugerencias}
+                </div>
+              </div>
+            )}
           </>
         )}
 
