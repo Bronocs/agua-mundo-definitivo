@@ -2,6 +2,21 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from '../styles/Modal.module.css';
 
+// Elimina tildes, convierte a minúsculas y reemplaza confusiones comunes
+function normaliza(texto) {
+  return texto
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")  // Quita tildes
+    .replace(/b/g, "v") // b y v como equivalentes
+    .replace(/v/g, "b")
+    .replace(/c/g, "s") // c, s y z como equivalentes
+    .replace(/s/g, "c")
+    .replace(/z/g, "s")
+    .replace(/h/g, "")  // Quita h muda
+}
+
+
 export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [busqueda, setBusqueda] = useState('');
   const [productos, setProductos] = useState([]);
@@ -31,52 +46,54 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   }, [modoLibre]);
 
   useEffect(() => {
-  // Filtrar productos más parecidos a la búsqueda (máx 15)
-  let productosFiltrados = productos
-    .filter(p =>
-      p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      p.codigo.includes(busqueda)
-    );
+    // Normaliza búsqueda
+    const textoBuscado = normaliza(busqueda);
 
-  setResultados(productosFiltrados);
+    // Filtra con normalización robusta (tildes y errores típicos)
+    let productosFiltrados = productos.filter(p => {
+      const nombreNorm = normaliza(p.nombre);
+      const codigoNorm = (p.codigo || '').toLowerCase();
+      return nombreNorm.includes(textoBuscado) || codigoNorm.includes(busqueda.toLowerCase());
+    });
 
-  // Si no hay resultados y la búsqueda es relevante, consulta a ChatGPT SOLO con los 15 más parecidos o primeros 15
-  if (busqueda.length > 2 && productosFiltrados.length === 0) {
-    // Reducir el tamaño del array para evitar exceder el límite de tokens
-    let productosReducidos = productos
-      .filter(p =>
-        p.nombre.toLowerCase().includes(busqueda.slice(0, 2).toLowerCase())
-      )
-      .slice(0, 15);
+    setResultados(productosFiltrados);
 
-    // Si sigue vacío, solo manda los primeros 10-15 de toda la lista
-    if (productosReducidos.length === 0) {
-      productosReducidos = productos.slice(0, 15);
+    // Si no hay resultados y la búsqueda es relevante, consulta a ChatGPT SOLO con 15 más parecidos o primeros 15
+    if (busqueda.length > 2 && productosFiltrados.length === 0) {
+      // Busca productos parecidos, robusto
+      let productosReducidos = productos.filter(p => {
+        const nombreNorm = normaliza(p.nombre);
+        return nombreNorm.includes(textoBuscado.slice(0, 2));
+      }).slice(0, 15);
+
+      if (productosReducidos.length === 0) {
+        productosReducidos = productos.slice(0, 15);
+      }
+
+      setCargandoSugerencias(true);
+      fetch('/api/recomendar-producto', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          consulta: busqueda,
+          productos: productosReducidos
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          setSugerencias(data.sugerencias);
+          setCargandoSugerencias(false);
+        })
+        .catch(() => {
+          setSugerencias('No se pudo obtener sugerencias');
+          setCargandoSugerencias(false);
+        });
+    } else {
+      setSugerencias('');
+      setCargandoSugerencias(false);
     }
-
-    setCargandoSugerencias(true);
-    fetch('/api/recomendar-producto', {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        consulta: busqueda,
-        productos: productosReducidos
-      })
-    })
-      .then(res => res.json())
-      .then(data => {
-        setSugerencias(data.sugerencias);
-        setCargandoSugerencias(false);
-      })
-      .catch(() => {
-        setSugerencias('No se pudo obtener sugerencias');
-        setCargandoSugerencias(false);
-      });
-  } else {
-    setSugerencias('');
-    setCargandoSugerencias(false);
-  }
   }, [busqueda, productos]);
+
 
 
   const handleSubmit = () => {
