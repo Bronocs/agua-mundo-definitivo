@@ -40,11 +40,11 @@ Devuelve el resultado en formato JSON como te he indicado en tus instrucciones.
   }
 
     // Este es el mensaje que vas a enviar al Assistant
-  console.log("Consulta que se enviará a ChatGPT API:");
-  console.log(consultaCorregida); // O "consulta" si no la corriges
 
   // --- Llamada al Assistant ---
   try {
+    console.log("Consulta que se enviará a ChatGPT API:");
+    console.log(consultaCorregida); // O "consulta" si no la corriges
     const thread = await openai.beta.threads.create();
     await openai.beta.threads.messages.create(thread.id, {
       role: "user",
