@@ -1,24 +1,8 @@
+// components/ModalAgregarProducto.jsx
 import { useState, useRef, useEffect } from 'react';
-import debounce from 'lodash.debounce';
 import styles from '../styles/Modal.module.css';
 
-// Elimina tildes, convierte a minúsculas y reemplaza confusiones comunes
-function normaliza(texto) {
-  return texto
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")  // Quita tildes
-    .replace(/b/g, "v") // b y v como equivalentes
-    .replace(/v/g, "b")
-    .replace(/c/g, "s") // c, s y z como equivalentes
-    .replace(/s/g, "c")
-    .replace(/z/g, "s")
-    .replace(/h/g, "")  // Quita h muda
-}
-
 export default function ModalAgregarProducto({ onClose, onAgregar }) {
-  // Estados para input y búsqueda (con debounce)
-  const [inputValue, setInputValue] = useState('');
   const [busqueda, setBusqueda] = useState('');
   const [productos, setProductos] = useState([]);
   const [resultados, setResultados] = useState([]);
@@ -28,21 +12,8 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [comentario, setComentario] = useState('');
   const [nombreLibre, setNombreLibre] = useState('');
   const [unidadLibre, setUnidadLibre] = useState('');
-  const [sugerencias, setSugerencias] = useState('');
-  const [cargandoSugerencias, setCargandoSugerencias] = useState(false);
 
   const comentarioRef = useRef(null);
-
-  // Debounce para setBusqueda
-  const debouncedSetBusqueda = useRef(
-    debounce((valor) => setBusqueda(valor), 500)
-  ).current;
-
-  // Handler del input: actualiza inputValue y aplica debounce a la búsqueda real
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-    debouncedSetBusqueda(e.target.value);
-  };
 
   useEffect(() => {
     async function cargarProductos() {
@@ -54,56 +25,23 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
         console.error('Error al cargar productos:', error);
       }
     }
+
     if (!modoLibre) cargarProductos();
   }, [modoLibre]);
 
   useEffect(() => {
-    // Normaliza búsqueda
-    const textoBuscado = normaliza(busqueda);
-
-    // Filtra con normalización robusta (tildes y errores típicos)
-    let productosFiltrados = productos.filter(p => {
-      const nombreNorm = normaliza(p.nombre);
-      const codigoNorm = (p.codigo || '').toLowerCase();
-      return nombreNorm.includes(textoBuscado) || codigoNorm.includes(busqueda.toLowerCase());
-    });
-
-    setResultados(productosFiltrados);
-
-    // Si no hay resultados y la búsqueda es relevante, consulta a ChatGPT SOLO con 15 más parecidos o primeros 15
-    if (busqueda.length > 2 && productosFiltrados.length === 0) {
-      // Busca productos parecidos, robusto
-      let productosReducidos = productos.filter(p => {
-        const nombreNorm = normaliza(p.nombre);
-        return nombreNorm.includes(textoBuscado.slice(0, 2));
-      }).slice(0, 15);
-
-      if (productosReducidos.length === 0) {
-        productosReducidos = productos.slice(0, 15);
-      }
-
-      setCargandoSugerencias(true);
-      fetch('/api/recomendar-producto', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          consulta: busqueda,
-          productos: productosReducidos
-        })
-      })
-        .then(res => res.json())
-        .then(data => {
-          setSugerencias(data.sugerencias);
-          setCargandoSugerencias(false);
-        })
-        .catch(() => {
-          setSugerencias('No se pudo obtener sugerencias');
-          setCargandoSugerencias(false);
-        });
-    } else {
-      setSugerencias('');
-      setCargandoSugerencias(false);
+    if (comentarioRef.current) {
+      comentarioRef.current.style.height = 'auto';
+      comentarioRef.current.style.height = comentarioRef.current.scrollHeight + 'px';
     }
+  }, [comentario]);
+
+  useEffect(() => {
+    const filtro = productos.filter(p =>
+      p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+      p.codigo.includes(busqueda)
+    );
+    setResultados(filtro);
   }, [busqueda, productos]);
 
   const handleSubmit = () => {
@@ -128,18 +66,16 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
               <input
                 type="text"
                 placeholder="Buscar producto por nombre o código"
-                value={inputValue}
-                onChange={handleInputChange}
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
               />
             </div>
 
             <button className={styles.btnLibre} onClick={() => {
               setModoLibre(true);
               setSeleccionado(null);
-              setInputValue('');
               setBusqueda('');
               setResultados([]);
-              setSugerencias('');
             }}>
               + LIBRE
             </button>
@@ -159,16 +95,6 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
                 ))
               )}
             </div>
-
-            {/* SUGERENCIAS DE CHATGPT */}
-            {!resultados.length && sugerencias && (
-              <div className={styles.sugerencias}>
-                <strong>¿Quizás buscabas?</strong>
-                <div>
-                  {cargandoSugerencias ? 'Consultando a la IA...' : sugerencias}
-                </div>
-              </div>
-            )}
           </>
         )}
 
