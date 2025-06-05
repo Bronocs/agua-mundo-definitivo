@@ -1,5 +1,6 @@
 // components/ModalAgregarProducto.jsx
 import { useState, useRef, useEffect } from 'react';
+import debounce from 'lodash.debounce';
 import styles from '../styles/Modal.module.css';
 
 // Elimina tildes, convierte a minúsculas y reemplaza confusiones comunes
@@ -31,6 +32,17 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [cargandoSugerencias, setCargandoSugerencias] = useState(false);
 
   const comentarioRef = useRef(null);
+
+  // Debounce: SOLO dispara búsqueda cuando el usuario deja de tipear 500ms
+  const debouncedSetBusqueda = useRef(
+    debounce((valor) => setBusqueda(valor), 500)
+  ).current;
+
+  // Cuando cambia el input, actualiza valor inmediato y espera para buscar
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+    debouncedSetBusqueda(e.target.value);
+  };
 
   useEffect(() => {
     async function cargarProductos() {
@@ -118,8 +130,8 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
               <input
                 type="text"
                 placeholder="Buscar producto por nombre o código"
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
+                value={inputValue}
+                onChange={handleInputChange}
               />
             </div>
 
