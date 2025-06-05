@@ -9,6 +9,33 @@ const THREAD_ID_FIJO = "thread_Kor3STm3MjF06U6aKGaHkQZo"; // <-- reemplaza por e
 
 // ... tus funciones auxiliares (obtenerVocabulario, fuzzySoloLetrasAvanzado) ...
 
+// Extrae todas las palabras posibles de los nombres de producto
+function obtenerVocabulario(productos) {
+  const vocab = new Set();
+  productos.forEach(p => {
+    (p.nombre || "").split(/\W+/).forEach(w => {
+      if (w.length > 1) vocab.add(w.toLowerCase());
+    });
+  });
+  return Array.from(vocab);
+}
+
+// Fuzzy sólo corrige subpalabras de letras usando vocabulario de todas las palabras del catálogo
+function fuzzySoloLetrasAvanzado(consulta, vocabulario) {
+  return consulta.split(/\s+/).map(fragmento => {
+    const subpalabras = fragmento.match(/[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ]+|[0-9]+|[^a-zA-ZáéíóúüñÁÉÍÓÚÜÑ0-9]+/g);
+    if (!subpalabras) return fragmento;
+    const corregido = subpalabras.map(sub => {
+      if (/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ]+$/.test(sub)) {
+        const r = fuzzysort.go(sub.toLowerCase(), vocabulario, { threshold: -1000 });
+        if (r.total > 0 && r[0].score >= -3) return r[0].target;
+      }
+      return sub;
+    }).join("");
+    return corregido;
+  }).join(" ");
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Sólo POST permitido" });
