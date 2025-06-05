@@ -1,4 +1,3 @@
-// components/ModalAgregarProducto.jsx
 import { useState, useRef, useEffect } from 'react';
 import debounce from 'lodash.debounce';
 import styles from '../styles/Modal.module.css';
@@ -17,8 +16,9 @@ function normaliza(texto) {
     .replace(/h/g, "")  // Quita h muda
 }
 
-
 export default function ModalAgregarProducto({ onClose, onAgregar }) {
+  // Estados para input y búsqueda (con debounce)
+  const [inputValue, setInputValue] = useState('');
   const [busqueda, setBusqueda] = useState('');
   const [productos, setProductos] = useState([]);
   const [resultados, setResultados] = useState([]);
@@ -33,12 +33,12 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
 
   const comentarioRef = useRef(null);
 
-  // Debounce: SOLO dispara búsqueda cuando el usuario deja de tipear 500ms
+  // Debounce para setBusqueda
   const debouncedSetBusqueda = useRef(
     debounce((valor) => setBusqueda(valor), 500)
   ).current;
 
-  // Cuando cambia el input, actualiza valor inmediato y espera para buscar
+  // Handler del input: actualiza inputValue y aplica debounce a la búsqueda real
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
     debouncedSetBusqueda(e.target.value);
@@ -106,8 +106,6 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
     }
   }, [busqueda, productos]);
 
-
-
   const handleSubmit = () => {
     const fecha = new Date().toLocaleDateString('es-PE');
     const producto = modoLibre
@@ -138,6 +136,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
             <button className={styles.btnLibre} onClick={() => {
               setModoLibre(true);
               setSeleccionado(null);
+              setInputValue('');
               setBusqueda('');
               setResultados([]);
               setSugerencias('');
