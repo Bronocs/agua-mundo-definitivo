@@ -28,6 +28,8 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [unidadLibre, setUnidadLibre] = useState('');
   const [sugerencias, setSugerencias] = useState('');
   const [cargandoSugerencias, setCargandoSugerencias] = useState(false);
+  const [threadId, setThreadId] = useState(null);
+
 
   const comentarioRef = useRef(null);
 
@@ -40,7 +42,8 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           consulta,
-          productos: productosReducidos
+          productos: productosReducidos,
+          thread_id: threadId
         })
       })
         .then(res => res.json())
@@ -55,6 +58,19 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
     }, 1000) // 600 ms debounce
   ).current;
   // -------------------------------
+
+  // Crea el thread solo al montar el componente
+  useEffect(() => {
+    async function crearThread() {
+      if (!threadId) {
+        const res = await fetch('/api/crear-thread', { method: 'POST' });
+        const data = await res.json();
+        setThreadId(data.thread_id);
+      }
+    }
+    crearThread();
+  }, []);
+
 
   useEffect(() => {
     async function cargarProductos() {

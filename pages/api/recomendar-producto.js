@@ -42,7 +42,7 @@ export default async function handler(req, res) {
   }
 
   const { consulta, productos } = req.body;
-  if (!consulta || !productos) {
+  if (!consulta || !productos || !thread_id) {
     return res.status(400).json({ error: "Faltan datos" });
   }
 
@@ -51,18 +51,18 @@ export default async function handler(req, res) {
 
   try {
     // Usa SIEMPRE el mismo thread_id
-    await openai.beta.threads.messages.create(THREAD_ID_FIJO, {
+    await openai.beta.threads.messages.create(thread_id, {
       role: "user",
       content: consultaCorregida
     });
 
-    const run = await openai.beta.threads.runs.create(THREAD_ID_FIJO, {
+    const run = await openai.beta.threads.runs.create(thread_id, {
       assistant_id: ASSISTANT_ID
     });
 
     let runStatus;
     do {
-      runStatus = await openai.beta.threads.runs.retrieve(THREAD_ID_FIJO, run.id);
+      runStatus = await openai.beta.threads.runs.retrieve(thread_id, run.id);
       if (runStatus.status === "completed") break;
       await new Promise(res => setTimeout(res, 2000));
     } while (["queued", "in_progress"].includes(runStatus.status));
@@ -71,7 +71,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ sugerencias: "No se pudo completar la consulta." });
     }
 
-    const messages = await openai.beta.threads.messages.list(THREAD_ID_FIJO);
+    const messages = await openai.beta.threads.messages.list(thread_id);
     const lastMessage = messages.data.reverse().find(m => m.role === "assistant");
     const respuesta = lastMessage ? lastMessage.content[0].text.value : "Sin respuesta";
 
