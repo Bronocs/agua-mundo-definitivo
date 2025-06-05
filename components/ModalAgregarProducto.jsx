@@ -33,6 +33,19 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
 
   const comentarioRef = useRef(null);
 
+  // Crea el thread solo al montar el componente
+  useEffect(() => {
+    async function crearThread() {
+      if (!threadId) {
+        const res = await fetch('/api/crear-thread', { method: 'POST' });
+        const data = await res.json();
+        setThreadId(data.thread_id);
+      }
+    }
+    crearThread();
+  }, []);
+
+
   // ---- DEBOUNCED FETCH A LA IA ----
   const debouncedFetchIA = useRef(
     debounce((consulta, productosReducidos, setSugerencias, setCargandoSugerencias) => {
