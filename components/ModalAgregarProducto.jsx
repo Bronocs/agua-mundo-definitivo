@@ -12,6 +12,8 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [comentario, setComentario] = useState('');
   const [nombreLibre, setNombreLibre] = useState('');
   const [unidadLibre, setUnidadLibre] = useState('');
+  const [sugerencias, setSugerencias] = useState('');
+  const [cargandoSugerencias, setCargandoSugerencias] = useState(false);
 
   const comentarioRef = useRef(null);
 
@@ -25,24 +27,57 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
         console.error('Error al cargar productos:', error);
       }
     }
-
     if (!modoLibre) cargarProductos();
   }, [modoLibre]);
 
   useEffect(() => {
-    if (comentarioRef.current) {
-      comentarioRef.current.style.height = 'auto';
-      comentarioRef.current.style.height = comentarioRef.current.scrollHeight + 'px';
-    }
-  }, [comentario]);
-
-  useEffect(() => {
-    const filtro = productos.filter(p =>
+  // Filtrar productos más parecidos a la búsqueda (máx 15)
+  let productosFiltrados = productos
+    .filter(p =>
       p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
       p.codigo.includes(busqueda)
     );
-    setResultados(filtro);
+
+  setResultados(productosFiltrados);
+
+  // Si no hay resultados y la búsqueda es relevante, consulta a ChatGPT SOLO con los 15 más parecidos o primeros 15
+  if (busqueda.length > 2 && productosFiltrados.length === 0) {
+    // Reducir el tamaño del array para evitar exceder el límite de tokens
+    let productosReducidos = productos
+      .filter(p =>
+        p.nombre.toLowerCase().includes(busqueda.slice(0, 2).toLowerCase())
+      )
+      .slice(0, 15);
+
+    // Si sigue vacío, solo manda los primeros 10-15 de toda la lista
+    if (productosReducidos.length === 0) {
+      productosReducidos = productos.slice(0, 15);
+    }
+
+    setCargandoSugerencias(true);
+    fetch('/api/recomendar-producto', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        consulta: busqueda,
+        productos: productosReducidos
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        setSugerencias(data.sugerencias);
+        setCargandoSugerencias(false);
+      })
+      .catch(() => {
+        setSugerencias('No se pudo obtener sugerencias');
+        setCargandoSugerencias(false);
+      });
+  } else {
+    setSugerencias('');
+    setCargandoSugerencias(false);
+  }
   }, [busqueda, productos]);
+
 
   const handleSubmit = () => {
     const fecha = new Date().toLocaleDateString('es-PE');
@@ -76,6 +111,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
               setSeleccionado(null);
               setBusqueda('');
               setResultados([]);
+              setSugerencias('');
             }}>
               + LIBRE
             </button>
@@ -95,6 +131,16 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
                 ))
               )}
             </div>
+
+            {/* SUGERENCIAS DE CHATGPT */}
+            {!resultados.length && sugerencias && (
+              <div className={styles.sugerencias}>
+                <strong>¿Quizás buscabas?</strong>
+                <div>
+                  {cargandoSugerencias ? 'Consultando a la IA...' : sugerencias}
+                </div>
+              </div>
+            )}
           </>
         )}
 
