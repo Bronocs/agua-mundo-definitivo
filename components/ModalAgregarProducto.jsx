@@ -1,185 +1,215 @@
-  // components/ModalAgregarProducto.jsx
-  import debounce from 'lodash.debounce'; // Ponlo arriba de tu archivo si no está
-  import { useState, useRef, useEffect } from 'react';
-  import styles from '../styles/Modal.module.css';
+import { useState, useRef, useEffect } from 'react';
+import debounce from 'lodash.debounce';
+import styles from '../styles/Modal.module.css';
 
-  export default function ModalAgregarProducto({ onClose, onAgregar }) {
-    const [busqueda, setBusqueda] = useState('');
-    const [productos, setProductos] = useState([]);
-    const [resultados, setResultados] = useState([]);
-    const [seleccionado, setSeleccionado] = useState(null);
-    const [modoLibre, setModoLibre] = useState(false);
-    const [cantidad, setCantidad] = useState('');
-    const [comentario, setComentario] = useState('');
-    const [nombreLibre, setNombreLibre] = useState('');
-    const [unidadLibre, setUnidadLibre] = useState('');
-    const [sugerencias, setSugerencias] = useState('');
-    const [cargandoSugerencias, setCargandoSugerencias] = useState(false);
+// Elimina tildes, convierte a minúsculas y reemplaza confusiones comunes
+function normaliza(texto) {
+  return texto
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")  // Quita tildes
+    .replace(/b/g, "v") // b y v como equivalentes
+    .replace(/v/g, "b")
+    .replace(/c/g, "s") // c, s y z como equivalentes
+    .replace(/s/g, "c")
+    .replace(/z/g, "s")
+    .replace(/h/g, "")  // Quita h muda
+}
 
-    const comentarioRef = useRef(null);
+export default function ModalAgregarProducto({ onClose, onAgregar }) {
+  const [busqueda, setBusqueda] = useState('');
+  const [productos, setProductos] = useState([]);
+  const [resultados, setResultados] = useState([]);
+  const [seleccionado, setSeleccionado] = useState(null);
+  const [modoLibre, setModoLibre] = useState(false);
+  const [cantidad, setCantidad] = useState('');
+  const [comentario, setComentario] = useState('');
+  const [nombreLibre, setNombreLibre] = useState('');
+  const [unidadLibre, setUnidadLibre] = useState('');
+  const [sugerencias, setSugerencias] = useState('');
+  const [cargandoSugerencias, setCargandoSugerencias] = useState(false);
 
-    useEffect(() => {
-      async function cargarProductos() {
-        try {
-          const res = await fetch('/api/productos');
-          const data = await res.json();
-          setProductos(data);
-        } catch (error) {
-          console.error('Error al cargar productos:', error);
-        }
-      }
-      if (!modoLibre) cargarProductos();
-    }, [modoLibre]);
+  const comentarioRef = useRef(null);
 
-    // ...
-
-    // Debounced fetch para la IA, declarado fuera del useEffect para no recrearlo cada vez
-    const debouncedFetchIA = useRef(
-      debounce((consulta, productosReducidos, setSugerencias, setCargandoSugerencias) => {
-        setCargandoSugerencias(true);
-        fetch('/api/recomendar-producto', {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            consulta,
-            productos: productosReducidos
-          })
+  // ---- DEBOUNCED FETCH A LA IA ----
+  const debouncedFetchIA = useRef(
+    debounce((consulta, productosReducidos, setSugerencias, setCargandoSugerencias) => {
+      setCargandoSugerencias(true);
+      fetch('/api/recomendar-producto', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          consulta,
+          productos: productosReducidos
         })
-          .then(res => res.json())
-          .then(data => {
-            setSugerencias(data.sugerencias);
-            setCargandoSugerencias(false);
-          })
-          .catch(() => {
-            setSugerencias('No se pudo obtener sugerencias');
-            setCargandoSugerencias(false);
-          });
-      }, 600) // 600 ms de debounce, puedes ajustar
-    ).current;
+      })
+        .then(res => res.json())
+        .then(data => {
+          setSugerencias(data.sugerencias);
+          setCargandoSugerencias(false);
+        })
+        .catch(() => {
+          setSugerencias('No se pudo obtener sugerencias');
+          setCargandoSugerencias(false);
+        });
+    }, 600) // 600 ms debounce
+  ).current;
+  // -------------------------------
 
-    // Y reemplaza SOLO la llamada a fetch por:
-    useEffect(() => {
-      // ... otros filtros ...
-      if (busqueda.length > 2 && productosFiltrados.length === 0) {
-        // ... construcción de productosReducidos ...
-        debouncedFetchIA(busqueda, productosReducidos, setSugerencias, setCargandoSugerencias);
-      } else {
-        setSugerencias('');
-        setCargandoSugerencias(false);
+  useEffect(() => {
+    async function cargarProductos() {
+      try {
+        const res = await fetch('/api/productos');
+        const data = await res.json();
+        setProductos(data);
+      } catch (error) {
+        console.error('Error al cargar productos:', error);
       }
-      // eslint-disable-next-line
-    }, [busqueda, productos]);
+    }
+    if (!modoLibre) cargarProductos();
+  }, [modoLibre]);
 
+  useEffect(() => {
+    // Normaliza búsqueda
+    const textoBuscado = normaliza(busqueda);
 
+    // Filtra con normalización robusta (tildes y errores típicos)
+    let productosFiltrados = productos.filter(p => {
+      const nombreNorm = normaliza(p.nombre);
+      const codigoNorm = (p.codigo || '').toLowerCase();
+      return nombreNorm.includes(textoBuscado) || codigoNorm.includes(busqueda.toLowerCase());
+    });
 
-    const handleSubmit = () => {
-      const fecha = new Date().toLocaleDateString('es-PE');
-      const producto = modoLibre
-        ? { fecha, nombre: nombreLibre, unidad: unidadLibre, cantidad, comentario }
-        : { fecha, ...seleccionado, cantidad, comentario };
-      if ((modoLibre && nombreLibre && unidadLibre && cantidad) || (!modoLibre && seleccionado && cantidad)) {
-        onAgregar(producto);
-        onClose();
+    setResultados(productosFiltrados);
+
+    // Si no hay resultados y la búsqueda es relevante, consulta a ChatGPT SOLO con 15 más parecidos o primeros 15
+    if (busqueda.length > 2 && productosFiltrados.length === 0) {
+      // Busca productos parecidos, robusto
+      let productosReducidos = productos.filter(p => {
+        const nombreNorm = normaliza(p.nombre);
+        return nombreNorm.includes(textoBuscado.slice(0, 2));
+      }).slice(0, 15);
+
+      if (productosReducidos.length === 0) {
+        productosReducidos = productos.slice(0, 15);
       }
-    };
 
-    return (
-      <div className={styles.overlay}>
-        <div className={styles.modal}>
-          <h3>AÑADIR PRODUCTO</h3>
+      debouncedFetchIA(busqueda, productosReducidos, setSugerencias, setCargandoSugerencias);
+    } else {
+      setSugerencias('');
+      setCargandoSugerencias(false);
+    }
+    // eslint-disable-next-line
+  }, [busqueda, productos]);
 
-          {!modoLibre && !seleccionado && (
-            <>
-              <div className={styles.searchBar}>
+  const handleSubmit = () => {
+    const fecha = new Date().toLocaleDateString('es-PE');
+    const producto = modoLibre
+      ? { fecha, nombre: nombreLibre, unidad: unidadLibre, cantidad, comentario }
+      : { fecha, ...seleccionado, cantidad, comentario };
+    if ((modoLibre && nombreLibre && unidadLibre && cantidad) || (!modoLibre && seleccionado && cantidad)) {
+      onAgregar(producto);
+      onClose();
+    }
+  };
+
+  return (
+    <div className={styles.overlay}>
+      <div className={styles.modal}>
+        <h3>AÑADIR PRODUCTO</h3>
+
+        {!modoLibre && !seleccionado && (
+          <>
+            <div className={styles.searchBar}>
+              <input
+                type="text"
+                placeholder="Buscar producto por nombre o código"
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+              />
+            </div>
+
+            <button className={styles.btnLibre} onClick={() => {
+              setModoLibre(true);
+              setSeleccionado(null);
+              setBusqueda('');
+              setResultados([]);
+              setSugerencias('');
+            }}>
+              + LIBRE
+            </button>
+
+            <div className={styles.lista}>
+              {resultados.length === 0 ? (
+                <p className={styles.sinDatos}>Sin datos</p>
+              ) : (
+                resultados.map((item, i) => (
+                  <div key={i} className={styles.item} onClick={() => setSeleccionado(item)}>
+                    <div>
+                      <strong>{item.nombre}</strong>
+                      <div className={styles.codigo}>{item.codigo}</div>
+                    </div>
+                    <div className={styles.unidad}>{item.unidad}</div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* SUGERENCIAS DE CHATGPT */}
+            {!resultados.length && sugerencias && (
+              <div className={styles.sugerencias}>
+                <strong>¿Quizás buscabas?</strong>
+                <div>
+                  {cargandoSugerencias ? 'Consultando a la IA...' : sugerencias}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {(modoLibre || seleccionado) && (
+          <div className={styles.formulario}>
+            {modoLibre && (
+              <>
                 <input
                   type="text"
-                  placeholder="Buscar producto por nombre o código"
-                  value={busqueda}
-                  onChange={(e) => setBusqueda(e.target.value)}
+                  placeholder="Nombre del producto"
+                  value={nombreLibre}
+                  onChange={(e) => setNombreLibre(e.target.value)}
+                  required
                 />
-              </div>
+                <input
+                  type="text"
+                  placeholder="Unidad (ej: KG, UND...)"
+                  value={unidadLibre}
+                  onChange={(e) => setUnidadLibre(e.target.value)}
+                  required
+                />
+              </>
+            )}
+            {!modoLibre && <p><strong>{seleccionado?.nombre}</strong></p>}
+            <input
+              type="number"
+              placeholder="Cantidad"
+              value={cantidad}
+              onChange={(e) => setCantidad(e.target.value)}
+              required
+            />
+            <textarea
+              name="comentario"
+              className={styles.textarea}
+              placeholder="Comentario (opcional)"
+              value={comentario}
+              onChange={(e) => setComentario(e.target.value)}
+              ref={comentarioRef}
+            />
 
-              <button className={styles.btnLibre} onClick={() => {
-                setModoLibre(true);
-                setSeleccionado(null);
-                setBusqueda('');
-                setResultados([]);
-                setSugerencias('');
-              }}>
-                + LIBRE
-              </button>
+            <button className={styles.btnAgregar} onClick={handleSubmit}>Agregar</button>
+          </div>
+        )}
 
-              <div className={styles.lista}>
-                {resultados.length === 0 ? (
-                  <p className={styles.sinDatos}>Sin datos</p>
-                ) : (
-                  resultados.map((item, i) => (
-                    <div key={i} className={styles.item} onClick={() => setSeleccionado(item)}>
-                      <div>
-                        <strong>{item.nombre}</strong>
-                        <div className={styles.codigo}>{item.codigo}</div>
-                      </div>
-                      <div className={styles.unidad}>{item.unidad}</div>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {/* SUGERENCIAS DE CHATGPT */}
-              {!resultados.length && sugerencias && (
-                <div className={styles.sugerencias}>
-                  <strong>¿Quizás buscabas?</strong>
-                  <div>
-                    {cargandoSugerencias ? 'Consultando a la IA...' : sugerencias}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-
-          {(modoLibre || seleccionado) && (
-            <div className={styles.formulario}>
-              {modoLibre && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Nombre del producto"
-                    value={nombreLibre}
-                    onChange={(e) => setNombreLibre(e.target.value)}
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="Unidad (ej: KG, UND...)"
-                    value={unidadLibre}
-                    onChange={(e) => setUnidadLibre(e.target.value)}
-                    required
-                  />
-                </>
-              )}
-              {!modoLibre && <p><strong>{seleccionado?.nombre}</strong></p>}
-              <input
-                type="number"
-                placeholder="Cantidad"
-                value={cantidad}
-                onChange={(e) => setCantidad(e.target.value)}
-                required
-              />
-              <textarea
-                name="comentario"
-                className={styles.textarea}
-                placeholder="Comentario (opcional)"
-                value={comentario}
-                onChange={(e) => setComentario(e.target.value)}
-                ref={comentarioRef}
-              />
-
-              <button className={styles.btnAgregar} onClick={handleSubmit}>Agregar</button>
-            </div>
-          )}
-
-          <button className={styles.btnCancelar} onClick={onClose}>❌ CANCELAR</button>
-        </div>
+        <button className={styles.btnCancelar} onClick={onClose}>❌ CANCELAR</button>
       </div>
-    );
-  }
+    </div>
+  );
+}
