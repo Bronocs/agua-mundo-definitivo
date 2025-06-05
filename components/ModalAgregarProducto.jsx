@@ -13,7 +13,7 @@ function normaliza(texto) {
     .replace(/c/g, "s") // c, s y z como equivalentes
     .replace(/s/g, "c")
     .replace(/z/g, "s")
-    .replace(/h/g, "");  // Quita h muda
+    .replace(/h/g, "")  // Quita h muda
 }
 
 export default function ModalAgregarProducto({ onClose, onAgregar }) {
@@ -28,36 +28,19 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [unidadLibre, setUnidadLibre] = useState('');
   const [sugerencias, setSugerencias] = useState('');
   const [cargandoSugerencias, setCargandoSugerencias] = useState(false);
-  const [threadId, setThreadId] = useState(null);
 
   const comentarioRef = useRef(null);
 
-  // Crea el thread solo al montar el componente
-  useEffect(() => {
-    async function crearThread() {
-      if (!threadId) {
-        const res = await fetch('/api/crear-thread', { method: 'POST' });
-        const data = await res.json();
-        setThreadId(data.thread_id);
-      }
-    }
-    crearThread();
-    // eslint-disable-next-line
-  }, []);
-
   // ---- DEBOUNCED FETCH A LA IA ----
   const debouncedFetchIA = useRef(
-    debounce((consulta, productosReducidos, setSugerencias, setCargandoSugerencias, threadIdParam) => {
-      // ¡NO intenta fetch si no hay threadId!
-      if (!threadIdParam) return;
+    debounce((consulta, productosReducidos, setSugerencias, setCargandoSugerencias) => {
       setCargandoSugerencias(true);
       fetch('/api/recomendar-producto', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           consulta,
-          productos: productosReducidos,
-          thread_id: threadIdParam
+          productos: productosReducidos
         })
       })
         .then(res => res.json())
@@ -69,7 +52,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
           setSugerencias('No se pudo obtener sugerencias');
           setCargandoSugerencias(false);
         });
-    }, 1000)
+    }, 1000) // 600 ms debounce
   ).current;
   // -------------------------------
 
@@ -87,7 +70,10 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   }, [modoLibre]);
 
   useEffect(() => {
+    // Normaliza búsqueda
     const textoBuscado = normaliza(busqueda);
+
+    // Filtra con normalización robusta (tildes y errores típicos)
     let productosFiltrados = productos.filter(p => {
       const nombreNorm = normaliza(p.nombre);
       const codigoNorm = (p.codigo || '').toLowerCase();
@@ -96,12 +82,9 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
 
     setResultados(productosFiltrados);
 
-    // --- solo busca en IA si threadId existe ---
-    if (
-      busqueda.length > 2 &&
-      productosFiltrados.length === 0 &&
-      threadId // <-- chequea que ya hay threadId antes de llamar al debounce
-    ) {
+    // Si no hay resultados y la búsqueda es relevante, consulta a ChatGPT SOLO con 15 más parecidos o primeros 15
+    if (busqueda.length > 2 && productosFiltrados.length === 0) {
+      // Busca productos parecidos, robusto
       let productosReducidos = productos.filter(p => {
         const nombreNorm = normaliza(p.nombre);
         return nombreNorm.includes(textoBuscado.slice(0, 2));
@@ -111,13 +94,13 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
         productosReducidos = productos.slice(0, 15);
       }
 
-      debouncedFetchIA(busqueda, productosReducidos, setSugerencias, setCargandoSugerencias, threadId);
+      debouncedFetchIA(busqueda, productosReducidos, setSugerencias, setCargandoSugerencias);
     } else {
       setSugerencias('');
       setCargandoSugerencias(false);
     }
     // eslint-disable-next-line
-  }, [busqueda, productos, threadId]); // <-- threadId como dependencia
+  }, [busqueda, productos]);
 
   const handleSubmit = () => {
     const fecha = new Date().toLocaleDateString('es-PE');
@@ -143,7 +126,6 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
                 placeholder="Buscar producto por nombre o código"
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
-                disabled={!threadId} // <-- opcional: deshabilita input hasta tener threadId
               />
             </div>
 

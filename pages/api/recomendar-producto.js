@@ -4,11 +4,6 @@ import fuzzysort from "fuzzysort";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const ASSISTANT_ID = "asst_nrkvYYIR23vekIXMcNLv3FoF";
 
-// Pega aquí tu thread_id fijo (¡cámbialo por el tuyo!)
-const THREAD_ID_FIJO = "thread_Kor3STm3MjF06U6aKGaHkQZo"; // <-- reemplaza por el tuyo
-
-// ... tus funciones auxiliares (obtenerVocabulario, fuzzySoloLetrasAvanzado) ...
-
 // Extrae todas las palabras posibles de los nombres de producto
 function obtenerVocabulario(productos) {
   const vocab = new Set();
@@ -41,31 +36,35 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Sólo POST permitido" });
   }
 
-  const { consulta, productos, thread_id} = req.body;
-  if (!consulta || !productos || !thread_id) {
+  const { consulta, productos } = req.body;
+  if (!consulta || !productos) {
     return res.status(400).json({ error: "Faltan datos" });
   }
 
+  // 1. Extrae todas las palabras únicas del catálogo para fuzzy (vocabulario)
   const vocabulario = obtenerVocabulario(productos);
+
+  // 2. Corrige solo subpalabras de letras (cada palabra con fuzzy contra vocabulario)
   const consultaCorregida = fuzzySoloLetrasAvanzado(consulta, vocabulario);
 
+  console.log("Consulta original:", consulta);
+  console.log("Consulta corregida:", consultaCorregida);
+
+  // 3. Envía consulta corregida tal cual a OpenAI
   try {
-
-    console.log(consultaCorregida)
-
-    // Usa SIEMPRE el mismo thread_id
-    await openai.beta.threads.messages.create(thread_id, {
+    const thread = await openai.beta.threads.create();
+    await openai.beta.threads.messages.create(thread.id, {
       role: "user",
       content: consultaCorregida
     });
 
-    const run = await openai.beta.threads.runs.create(thread_id, {
+    const run = await openai.beta.threads.runs.create(thread.id, {
       assistant_id: ASSISTANT_ID
     });
 
     let runStatus;
     do {
-      runStatus = await openai.beta.threads.runs.retrieve(thread_id, run.id);
+      runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
       if (runStatus.status === "completed") break;
       await new Promise(res => setTimeout(res, 2000));
     } while (["queued", "in_progress"].includes(runStatus.status));
@@ -74,12 +73,11 @@ export default async function handler(req, res) {
       return res.status(500).json({ sugerencias: "No se pudo completar la consulta." });
     }
 
-    const messages = await openai.beta.threads.messages.list(thread_id);
+    const messages = await openai.beta.threads.messages.list(thread.id);
     const lastMessage = messages.data.reverse().find(m => m.role === "assistant");
     const respuesta = lastMessage ? lastMessage.content[0].text.value : "Sin respuesta";
 
     res.status(200).json({ sugerencias: respuesta });
-
   } catch (e) {
     console.error("Error con OpenAI Assistant:", e);
     res.status(500).json({ sugerencias: "No se pudo obtener respuesta. " + (e?.message || '') });
