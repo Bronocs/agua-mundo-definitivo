@@ -52,7 +52,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
           setSugerencias('No se pudo obtener sugerencias');
           setCargandoSugerencias(false);
         });
-    }, 600) // 600 ms debounce
+    }, 1000) // 600 ms debounce
   ).current;
   // -------------------------------
 
