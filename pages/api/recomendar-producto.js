@@ -50,6 +50,9 @@ export default async function handler(req, res) {
   const consultaCorregida = fuzzySoloLetrasAvanzado(consulta, vocabulario);
 
   try {
+
+    console.log(consultaCorregida)
+
     // Usa SIEMPRE el mismo thread_id
     await openai.beta.threads.messages.create(thread_id, {
       role: "user",
