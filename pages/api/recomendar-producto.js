@@ -41,7 +41,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Sólo POST permitido" });
   }
 
-  const { consulta, productos } = req.body;
+  const { consulta, productos, thread_id} = req.body;
   if (!consulta || !productos || !thread_id) {
     return res.status(400).json({ error: "Faltan datos" });
   }
