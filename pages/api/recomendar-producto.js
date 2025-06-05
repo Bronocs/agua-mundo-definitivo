@@ -4,23 +4,24 @@ import fuzzysort from "fuzzysort";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const ASSISTANT_ID = "asst_nrkvYYIR23vekIXMcNLv3FoF";
 
-// Función avanzada de fuzzy solo para letras (palabras pegadas a números/símbolos también)
+// Corrige solo subpalabras alfanuméricas que sean letras (no números ni símbolos)
 function fuzzySoloLetrasAvanzado(consulta, keywordsProductos) {
+  // Para máximo realismo: quitamos duplicados y ordenamos por longitud descendente
+  const keywordsUnicas = Array.from(new Set(keywordsProductos)).sort((a, b) => b.length - a.length);
+
+  // Divide cada palabra por espacios
   return consulta.split(/\s+/).map(fragmento => {
-    // Divide fragmento en sub-palabras: letras, números, otros
-    // Ejemplo: "vrida1" -> ["vrida", "1"]
+    // Separa en letras, números, y otros (ej: "vrida1" => ["vrida", "1"])
     const subpalabras = fragmento.match(/[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ]+|[0-9]+|[^a-zA-ZáéíóúüñÁÉÍÓÚÜÑ0-9]+/g);
     if (!subpalabras) return fragmento;
-
-    // Corrige solo la parte de letras
     const corregido = subpalabras.map(sub => {
       if (/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ]+$/.test(sub)) {
-        const r = fuzzysort.go(sub.toLowerCase(), keywordsProductos, { threshold: -1000 });
-        if (r.total > 0 && r[0].score > -4) return r[0].target;
+        const r = fuzzysort.go(sub.toLowerCase(), keywordsUnicas, { threshold: -1000 });
+        // El score depende del tamaño, -2 para palabras cortas y -4 para medianas/largas
+        if (r.total > 0 && r[0].score >= -4) return r[0].target;
       }
       return sub;
     }).join("");
-
     return corregido;
   }).join(" ");
 }
@@ -35,42 +36,27 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Faltan datos" });
   }
 
-  // 1. Armamos una lista de keywords solo con nombres de productos en minúsculas
-  const keywordsProductos = productos.map(p => p.nombre.toLowerCase());
+  // Armamos la lista de keywords con nombres de productos, en minúsculas y sin tildes
+  const keywordsProductos = productos.map(p =>
+    p.nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+  );
 
-  // 2. Corregimos la consulta SOLO en las partes de letras
-  const consultaCorregida = fuzzySoloLetrasAvanzado(consulta, keywordsProductos);
+  // 1. Corrige la consulta SOLO las subpalabras de letras
+  const consultaCorregida = fuzzySoloLetrasAvanzado(
+    consulta.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(),
+    keywordsProductos
+  );
 
-  // 3. Usamos fuzzysort sobre nombres completos para buscar sugerencias (como antes)
-  const nombresProductos = productos.map(p => p.nombre);
-  const resultados = fuzzysort.go(consultaCorregida, nombresProductos, { limit: 5, threshold: -1000 });
-  const productosParecidos = resultados.map(r => productos.find(p => p.nombre === r.target));
-
-  // 4. Armamos el mensaje para el Assistant (igual que antes)
-  let mensajeParaAssistant = consultaCorregida;
-  if (productosParecidos.length > 0) {
-    mensajeParaAssistant = `
-El usuario buscó: "${consultaCorregida}"
-Coincidencias sugeridas:
-${productosParecidos.map(
-  p => `- ${p.nombre} (${p.codigo}, ${p.unidad})`
-).join('\n')}
-Si hay una coincidencia exacta, ponla primero.
-Devuelve el resultado en formato JSON como te he indicado en tus instrucciones.
-`.trim();
-  }
-
-  // Puedes loggear aquí para depurar
+  // Puedes loggear para verificar:
   console.log("Consulta original:", consulta);
   console.log("Consulta corregida:", consultaCorregida);
-  console.log("Mensaje enviado a OpenAI:", mensajeParaAssistant);
 
-  // --- Llamada al Assistant ---
+  // 2. Envía consulta corregida tal cual (sin sugerencias extra ni prompt largo)
   try {
     const thread = await openai.beta.threads.create();
     await openai.beta.threads.messages.create(thread.id, {
       role: "user",
-      content: mensajeParaAssistant
+      content: consultaCorregida
     });
 
     const run = await openai.beta.threads.runs.create(thread.id, {
