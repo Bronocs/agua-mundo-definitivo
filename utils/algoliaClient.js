@@ -1,6 +1,6 @@
-import * as algoliasearch from 'algoliasearch/lite';
+import algoliasearch from 'algoliasearch@5.27.0';
 
-export const searchClient = algoliasearch.default(
+export const searchClient = algoliasearch(
   process.env.TU_APPLICATION_ID,
   process.env.TU_SEARCH_API_KEY
 );
