@@ -12,17 +12,17 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [comentario, setComentario] = useState('');
   const [nombreLibre, setNombreLibre] = useState('');
   const [unidadLibre, setUnidadLibre] = useState('');
-  const [sugerencias, setSugerencias] = useState('');
   const [cargando, setCargando] = useState(false);
+  const [sugerencias, setSugerencias] = useState('');
 
   const comentarioRef = useRef(null);
 
-  // ---- Algolia search con debounce ----
+  // Algolia search con debounce
   const debouncedBuscar = useRef(
     debounce(async (consulta) => {
       setCargando(true);
-      setSugerencias('');
       setResultados([]);
+      setSugerencias('');
       if (!consulta || consulta.trim().length < 2) {
         setCargando(false);
         return;
@@ -43,8 +43,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
     }, 700)
   ).current;
 
-  // Trigger search cuando cambia la búsqueda
-  // No usar useEffect porque debounce ya es estable
+  // Maneja búsqueda en tiempo real
   const handleInputChange = e => {
     setBusqueda(e.target.value);
     debouncedBuscar(e.target.value);
