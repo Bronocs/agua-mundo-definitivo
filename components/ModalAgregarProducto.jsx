@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import debounce from 'lodash.debounce';
 import styles from '../styles/Modal.module.css';
-import { productosIndex } from '../utils/algoliaClient';
+import { algoliasearch } from "algoliasearch";
 
 export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [busqueda, setBusqueda] = useState('');
@@ -16,6 +16,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [sugerencias, setSugerencias] = useState('');
 
   const comentarioRef = useRef(null);
+  const client = algoliasearch(process.env.TU_APPLICATION_ID, process.env.TU_SEARCH_API_KEY);
 
   // Algolia search con debounce
   const debouncedBuscar = useRef(
@@ -28,7 +29,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
         return;
       }
       try {
-        const res = await productosIndex.search(consulta, { hitsPerPage: 20 });
+        const res = await client.searchSingleIndex({indexName: process.env.ALGOLIA_INDEX_NAME,searchParams: {query: consulta},});
         if (res.hits && res.hits.length > 0) {
           setResultados(res.hits);
         } else {
