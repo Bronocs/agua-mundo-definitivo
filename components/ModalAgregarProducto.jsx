@@ -31,6 +31,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
       try {
         const res = await client.searchSingleIndex({indexName: process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME,searchParams: {query: consulta},});
         if (res.hits && res.hits.length > 0) {
+          console.log(res.hits)
           setResultados(res.hits);
         } else {
           setResultados([]);
