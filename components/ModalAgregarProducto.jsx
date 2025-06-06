@@ -16,7 +16,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [sugerencias, setSugerencias] = useState('');
 
   const comentarioRef = useRef(null);
-  const client = algoliasearch(process.env.TU_APPLICATION_ID, process.env.TU_SEARCH_API_KEY);
+  const client = algoliasearch(NEXT_PUBLIC_TU_APPLICATION_ID, NEXT_PUBLIC_TU_SEARCH_API_KEY);
 
   // Algolia search con debounce
   const debouncedBuscar = useRef(
@@ -29,7 +29,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
         return;
       }
       try {
-        const res = await client.searchSingleIndex({indexName: process.env.ALGOLIA_INDEX_NAME,searchParams: {query: consulta},});
+        const res = await client.searchSingleIndex({indexName: NEXT_PUBLIC_ALGOLIA_INDEX_NAME,searchParams: {query: consulta},});
         if (res.hits && res.hits.length > 0) {
           setResultados(res.hits);
         } else {
