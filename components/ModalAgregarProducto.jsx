@@ -1,24 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import debounce from 'lodash.debounce';
 import styles from '../styles/Modal.module.css';
-
-// Elimina tildes, convierte a minúsculas y reemplaza confusiones comunes
-function normaliza(texto) {
-  return texto
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")  // Quita tildes
-    .replace(/b/g, "v") // b y v como equivalentes
-    .replace(/v/g, "b")
-    .replace(/c/g, "s") // c, s y z como equivalentes
-    .replace(/s/g, "c")
-    .replace(/z/g, "s")
-    .replace(/h/g, "")  // Quita h muda
-}
+import { productosIndex } from '../utils/algoliaClient';
 
 export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [busqueda, setBusqueda] = useState('');
-  const [productos, setProductos] = useState([]);
   const [resultados, setResultados] = useState([]);
   const [seleccionado, setSeleccionado] = useState(null);
   const [modoLibre, setModoLibre] = useState(false);
@@ -27,80 +13,42 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const [nombreLibre, setNombreLibre] = useState('');
   const [unidadLibre, setUnidadLibre] = useState('');
   const [sugerencias, setSugerencias] = useState('');
-  const [cargandoSugerencias, setCargandoSugerencias] = useState(false);
+  const [cargando, setCargando] = useState(false);
 
   const comentarioRef = useRef(null);
 
-  // ---- DEBOUNCED FETCH A LA IA ----
-  const debouncedFetchIA = useRef(
-    debounce((consulta, productosReducidos, setSugerencias, setCargandoSugerencias) => {
-      setCargandoSugerencias(true);
-      fetch('/api/recomendar-producto', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          consulta,
-          productos: productosReducidos
-        })
-      })
-        .then(res => res.json())
-        .then(data => {
-          setSugerencias(data.sugerencias);
-          setCargandoSugerencias(false);
-        })
-        .catch(() => {
-          setSugerencias('No se pudo obtener sugerencias');
-          setCargandoSugerencias(false);
-        });
-    }, 1000) // 600 ms debounce
-  ).current;
-  // -------------------------------
-
-  useEffect(() => {
-    async function cargarProductos() {
-      try {
-        const res = await fetch('/api/productos');
-        const data = await res.json();
-        setProductos(data);
-      } catch (error) {
-        console.error('Error al cargar productos:', error);
-      }
-    }
-    if (!modoLibre) cargarProductos();
-  }, [modoLibre]);
-
-  useEffect(() => {
-    // Normaliza búsqueda
-    const textoBuscado = normaliza(busqueda);
-
-    // Filtra con normalización robusta (tildes y errores típicos)
-    let productosFiltrados = productos.filter(p => {
-      const nombreNorm = normaliza(p.nombre);
-      const codigoNorm = (p.codigo || '').toLowerCase();
-      return nombreNorm.includes(textoBuscado) || codigoNorm.includes(busqueda.toLowerCase());
-    });
-
-    setResultados(productosFiltrados);
-
-    // Si no hay resultados y la búsqueda es relevante, consulta a ChatGPT SOLO con 15 más parecidos o primeros 15
-    if (busqueda.length > 2 && productosFiltrados.length === 0) {
-      // Busca productos parecidos, robusto
-      let productosReducidos = productos.filter(p => {
-        const nombreNorm = normaliza(p.nombre);
-        return nombreNorm.includes(textoBuscado.slice(0, 2));
-      }).slice(0, 15);
-
-      if (productosReducidos.length === 0) {
-        productosReducidos = productos.slice(0, 15);
-      }
-
-      debouncedFetchIA(busqueda, productosReducidos, setSugerencias, setCargandoSugerencias);
-    } else {
+  // ---- Algolia search con debounce ----
+  const debouncedBuscar = useRef(
+    debounce(async (consulta) => {
+      setCargando(true);
       setSugerencias('');
-      setCargandoSugerencias(false);
-    }
-    // eslint-disable-next-line
-  }, [busqueda, productos]);
+      setResultados([]);
+      if (!consulta || consulta.trim().length < 2) {
+        setCargando(false);
+        return;
+      }
+      try {
+        const res = await productosIndex.search(consulta, { hitsPerPage: 20 });
+        if (res.hits && res.hits.length > 0) {
+          setResultados(res.hits);
+        } else {
+          setResultados([]);
+          setSugerencias('No se encontraron resultados en el catálogo.');
+        }
+      } catch (e) {
+        setResultados([]);
+        setSugerencias('Error en la búsqueda.');
+      }
+      setCargando(false);
+    }, 700)
+  ).current;
+
+  // Trigger search cuando cambia la búsqueda
+  // No usar useEffect porque debounce ya es estable
+  const handleInputChange = e => {
+    setBusqueda(e.target.value);
+    debouncedBuscar(e.target.value);
+  };
 
   const handleSubmit = () => {
     const fecha = new Date().toLocaleDateString('es-PE');
@@ -125,7 +73,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
                 type="text"
                 placeholder="Buscar producto por nombre o código"
                 value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
+                onChange={handleInputChange}
               />
             </div>
 
@@ -140,7 +88,9 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
             </button>
 
             <div className={styles.lista}>
-              {resultados.length === 0 ? (
+              {cargando ? (
+                <p className={styles.sinDatos}>Buscando...</p>
+              ) : resultados.length === 0 ? (
                 <p className={styles.sinDatos}>Sin datos</p>
               ) : (
                 resultados.map((item, i) => (
@@ -155,13 +105,10 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
               )}
             </div>
 
-            {/* SUGERENCIAS DE CHATGPT */}
             {!resultados.length && sugerencias && (
               <div className={styles.sugerencias}>
                 <strong>¿Quizás buscabas?</strong>
-                <div>
-                  {cargandoSugerencias ? 'Consultando a la IA...' : sugerencias}
-                </div>
+                <div>{sugerencias}</div>
               </div>
             )}
           </>
@@ -175,14 +122,14 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
                   type="text"
                   placeholder="Nombre del producto"
                   value={nombreLibre}
-                  onChange={(e) => setNombreLibre(e.target.value)}
+                  onChange={e => setNombreLibre(e.target.value)}
                   required
                 />
                 <input
                   type="text"
                   placeholder="Unidad (ej: KG, UND...)"
                   value={unidadLibre}
-                  onChange={(e) => setUnidadLibre(e.target.value)}
+                  onChange={e => setUnidadLibre(e.target.value)}
                   required
                 />
               </>
@@ -192,7 +139,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
               type="number"
               placeholder="Cantidad"
               value={cantidad}
-              onChange={(e) => setCantidad(e.target.value)}
+              onChange={e => setCantidad(e.target.value)}
               required
             />
             <textarea
@@ -200,7 +147,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
               className={styles.textarea}
               placeholder="Comentario (opcional)"
               value={comentario}
-              onChange={(e) => setComentario(e.target.value)}
+              onChange={e => setComentario(e.target.value)}
               ref={comentarioRef}
             />
 
