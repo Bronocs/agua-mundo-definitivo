@@ -97,10 +97,10 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
                 resultados.map((item, i) => (
                   <div key={i} className={styles.item} onClick={() => setSeleccionado(item)}>
                     <div>
-                      <strong>{item.nombre}</strong>
-                      <div className={styles.codigo}>{item.codigo}</div>
+                      <strong>{item.arreglo_descripcion}</strong>
+                      <div className={styles.codigo}>{item.Detalles}</div>
                     </div>
-                    <div className={styles.unidad}>{item.unidad}</div>
+                    <div className={styles.unidad}>{item.producto}</div>
                   </div>
                 ))
               )}
