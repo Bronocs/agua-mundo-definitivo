@@ -53,10 +53,9 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
 
   const handleSubmit = () => {
     const fecha = new Date().toLocaleDateString('es-PE');
-    console.log(seleccionado)
     const producto = modoLibre
       ? { fecha, nombre: nombreLibre, unidad: unidadLibre, cantidad, comentario }
-      : { fecha, descripcion:seleccionado.arreglo_descripcion , cantidad, comentario };
+      : { fecha, nombre: seleccionado.arreglo_descripcion, unidad: seleccionado.producto, cantidad, comentario };
     if ((modoLibre && nombreLibre && unidadLibre && cantidad) || (!modoLibre && seleccionado && cantidad)) {
       onAgregar(producto);
       onClose();
