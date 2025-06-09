@@ -55,7 +55,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
     const fecha = new Date().toLocaleDateString('es-PE');
     const producto = modoLibre
       ? { fecha, nombre: nombreLibre, unidad: unidadLibre, cantidad, comentario }
-      : { fecha, ...seleccionado, cantidad, comentario };
+      : { fecha, descripcion:seleccionado.arreglo_descripcion , cantidad, comentario };
     if ((modoLibre && nombreLibre && unidadLibre && cantidad) || (!modoLibre && seleccionado && cantidad)) {
       onAgregar(producto);
       onClose();
@@ -135,7 +135,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
                 />
               </>
             )}
-            {!modoLibre && <p><strong>{seleccionado?.nombre}</strong></p>}
+            {!modoLibre && <p><strong>{seleccionado?.arreglo_descripcion}</strong></p>}
             <input
               type="number"
               placeholder="Cantidad"
