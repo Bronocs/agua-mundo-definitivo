@@ -67,7 +67,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <button type="button" className={styles.iconBtn} onClick={e => setSeleccionado(null)}>
+          <button type="button" className={styles.iconBtn} onClick={e => {setSeleccionado(null); setModoLibre(false);}}>
             ←
           </button>
           <h3 className={styles.title}>AÑADIR PRODUCTO</h3>
