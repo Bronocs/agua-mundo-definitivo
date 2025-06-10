@@ -159,14 +159,14 @@
 
 /* Botón ATRÁS: mismo look que LIBRE (o ajusta colores) */
 .btnAtras {
-  max-width: 50px;
+  width: 50px;
   background: #95a89c;
   color: #454e48;
 }
 
 /* Botón CERRAR: podrías usar otro color, p.ej. rojo suave */
 .btnCerrar {
-  max-width: 50px;
+  width: 50px;
   background: #ffe5e5;
   color: #cc0000;
 }
