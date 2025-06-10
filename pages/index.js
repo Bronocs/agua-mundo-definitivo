@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div className={styles.contenedor}>
       <img
-        src="/logo.png"
+        src="/logoAMalta.png"
         alt="Logo Agua Mundo"
         className={styles.logo}
       />
