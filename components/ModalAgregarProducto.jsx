@@ -79,8 +79,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
             }}>
               + LIBRE
           </button>
-          <button type="button" className={`${styles.iconBtn} ${styles.btnCerrar}`} onClick={onClose}>
-            ✕
+          <button type="button" className={`${styles.iconBtn} ${styles.btnCerrar}`} onClick={onClose}>✕
           </button>
         </div>        
 

@@ -136,7 +136,6 @@
 }
 
 /* Estilos base que ya tenías */
-.btnLibre,
 .btnAgregar,
 .btnCancelar,
 .btnAtras {
@@ -153,18 +152,20 @@
 .btnLibre {
   background: #f0f8ff;
   color: #0077cc;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 /* Botón ATRÁS: mismo look que LIBRE (o ajusta colores) */
 .btnAtras {
-  max-width: 30px;
+  max-width: 40px;
   background: #f0f8ff;
   color: #0077cc;
 }
 
 /* Botón CERRAR: podrías usar otro color, p.ej. rojo suave */
 .btnCerrar {
-  max-width: 30px;
+  max-width: 40px;
   background: #ffe5e5;
   color: #cc0000;
 }
