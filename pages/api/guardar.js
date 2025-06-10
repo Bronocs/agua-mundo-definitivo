@@ -29,7 +29,7 @@ async function generarNumeroOrden(sheets, spreadsheetId) {
   }
 
   // 4. Formateamos con 3 dígitos
-  const seqStr = String(secuencia).padStart(3, '0');
+  const seqStr =  "DP" + String(secuencia).padStart(3, '0');
   return `${year}-${month}-${seqStr}`;
 }
 
