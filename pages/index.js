@@ -4,9 +4,9 @@ import styles from '../styles/Home.module.css';
 
 export default function Home() {
   return (
-    <div className={styles.contenedor}>
+    <div className={styles.contenedor2}>
       <h1>Pedidos Agua Mundo</h1>
-      <div className={styles.botones}>
+      <div className={styles.botones2}>
         <Link href="/agregar">
           <button>➕ Crear Pedido</button>
         </Link>
