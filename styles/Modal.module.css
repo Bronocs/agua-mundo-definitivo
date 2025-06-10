@@ -118,7 +118,8 @@
 
 .btnLibre,
 .btnAgregar,
-.btnCancelar {
+.btnCancelar,
+.btnAtras {
   width: 100%;
   padding: 0.75rem;
   font-size: 1rem;
@@ -142,6 +143,11 @@
   background: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
+}
+
+.btnAtras {
+  background: #f0f8ff;
+  color: #0077cc;
 }
 
 .sinDatos {
