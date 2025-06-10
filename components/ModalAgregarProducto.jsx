@@ -65,55 +65,60 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
+        <div class="modal-header">
         <h3>AÑADIR PRODUCTO</h3>
-
-        {!modoLibre && !seleccionado && (
-          <>
-            <div className={styles.searchBar}>
-              <input
-                type="text"
-                placeholder="Buscar producto por nombre o código"
-                value={busqueda}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <button className={styles.btnLibre} onClick={() => {
-              setModoLibre(true);
-              setSeleccionado(null);
-              setBusqueda('');
-              setResultados([]);
-              setSugerencias('');
-            }}>
-              + LIBRE
-            </button>
-
-            <div className={styles.lista}>
-              {cargando ? (
-                <p className={styles.sinDatos}>Buscando...</p>
-              ) : resultados.length === 0 ? (
-                <p className={styles.sinDatos}>Sin datos</p>
-              ) : (
-                resultados.map((item, i) => (
-                  <div key={i} className={styles.item} onClick={() => setSeleccionado(item)}>
-                    <div>
-                      <strong>{item.arreglo_descripcion}</strong>
-                      <div className={styles.codigo}>{item.Detalles}</div>
-                    </div>
-                    <div className={styles.unidad}>{item.producto}</div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {!resultados.length && sugerencias && (
-              <div className={styles.sugerencias}>
-                <strong>¿Quizás buscabas?</strong>
-                <div>{sugerencias}</div>
-              </div>
+            {!modoLibre && !seleccionado && (
+              <>
+                <div className={styles.searchBar}>
+                  <input
+                    type="text"
+                    placeholder="Buscar producto por nombre o código"
+                    value={busqueda}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <button className={styles.btnCancelar} onClick={onClose}>❌ CANCELAR</button>
+                <button className={styles.btnLibre} onClick={() => {
+                  setModoLibre(true);
+                  setSeleccionado(null);
+                  setBusqueda('');
+                  setResultados([]);
+                  setSugerencias('');
+                }}>
+                  + LIBRE
+                </button>
+              </>
             )}
-          </>
-        )}
+        </div>
+        <div class="modal-body">
+            {!modoLibre && !seleccionado && (
+              <>
+                <div className={styles.lista}>
+                  {cargando ? (
+                    <p className={styles.sinDatos}>Buscando...</p>
+                  ) : resultados.length === 0 ? (
+                    <p className={styles.sinDatos}>Sin datos</p>
+                  ) : (
+                    resultados.map((item, i) => (
+                      <div key={i} className={styles.item} onClick={() => setSeleccionado(item)}>
+                        <div>
+                          <strong>{item.arreglo_descripcion}</strong>
+                          <div className={styles.codigo}>{item.Detalles}</div>
+                        </div>
+                        <div className={styles.unidad}>{item.producto}</div>
+                      </div>
+                    ))
+                  )}
+                </div>
+                {!resultados.length && sugerencias && (
+                  <div className={styles.sugerencias}>
+                    <strong>¿Quizás buscabas?</strong>
+                    <div>{sugerencias}</div>
+                  </div>
+                )}
+              </>
+            )}
+        </div>
 
         {(modoLibre || seleccionado) && (
           <div className={styles.formulario}>
@@ -155,8 +160,6 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
             <button className={styles.btnAgregar} onClick={handleSubmit}>Agregar</button>
           </div>
         )}
-
-        <button className={styles.btnCancelar} onClick={onClose}>❌ CANCELAR</button>
       </div>
     </div>
   );
