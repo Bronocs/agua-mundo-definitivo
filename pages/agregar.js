@@ -1,5 +1,5 @@
 // pages/agregar.js
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ModalAgregarProducto from '../components/ModalAgregarProducto.jsx';
 import styles from '../styles/Home.module.css';
 
@@ -7,6 +7,18 @@ export default function Agregar() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [materiales, setMateriales] = useState([]);
   const [nombreProyecto, setNombreProyecto] = useState('');
+  const modalRef = useRef(null);
+
+  // Cuando mostrarModal pasa a true, desplazamos la ventana arriba
+  useEffect(() => {
+    if (mostrarModal) {
+      // Opción A: llevar todo el scroll de la página al tope
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Opción B: centrar la vista justo en el modal
+      // modalRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [mostrarModal]);
 
   const agregarProducto = (producto) => {
     setMateriales([...materiales, producto]);
@@ -52,7 +64,9 @@ export default function Agregar() {
 
       {/* Campo para el nombre del proyecto */}
       <div style={{ marginBottom: '1.5rem' }}>
-        <label htmlFor="nombreProyecto" style={{ fontWeight: 'bold' }}>Nombre del Proyecto:</label>
+        <label htmlFor="nombreProyecto" style={{ fontWeight: 'bold' }}>
+          Nombre del Proyecto:
+        </label>
         <input
           id="nombreProyecto"
           type="text"
@@ -88,11 +102,14 @@ export default function Agregar() {
       )}
 
       {mostrarModal && (
-        <ModalAgregarProducto
-          onClose={() => setMostrarModal(false)}
-          onAgregar={agregarProducto}
-          modoLibre={false}
-        />
+        // Este div tiene la ref para scrollIntoView si la usas
+        <div ref={modalRef}>
+          <ModalAgregarProducto
+            onClose={() => setMostrarModal(false)}
+            onAgregar={agregarProducto}
+            modoLibre={false}
+          />
+        </div>
       )}
     </div>
   );
