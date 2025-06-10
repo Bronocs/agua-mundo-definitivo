@@ -70,7 +70,15 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
           <button type="button" className={styles.iconBtn} onClick={e => {setSeleccionado(null); setModoLibre(false);}}>
             ←
           </button>
-          <h3 className={styles.title}>AÑADIR PRODUCTO</h3>
+          <button className={styles.btnLibre} onClick={() => {
+              setModoLibre(true);
+              setSeleccionado(null);
+              setBusqueda('');
+              setResultados([]);
+              setSugerencias('');
+            }}>
+              + LIBRE
+          </button>
           <button type="button" className={styles.iconBtn} onClick={onClose}>
             ✕
           </button>
@@ -86,16 +94,6 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
                 onChange={handleInputChange}
               />
             </div>
-
-            <button className={styles.btnLibre} onClick={() => {
-              setModoLibre(true);
-              setSeleccionado(null);
-              setBusqueda('');
-              setResultados([]);
-              setSugerencias('');
-            }}>
-              + LIBRE
-            </button>
 
             <div className={styles.lista}>
               {cargando ? (
