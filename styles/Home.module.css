@@ -1,8 +1,22 @@
 .contenedor {
   max-width: 600px;
+  width: 100%;
   margin: 0 auto;
   padding: 1rem;
   font-family: sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.logo {
+  margin-bottom: 1.5rem;  /* separa el logo del título */
+  /* si usas <img> y quieres un tamaño fijo: */
+  width: 120px;
+  height: auto;
 }
 
 .contenedor h2 {
