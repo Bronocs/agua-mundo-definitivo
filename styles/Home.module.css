@@ -15,12 +15,17 @@
 .logo {
   margin-bottom: 1.5rem;  /* separa el logo del título */
   /* si usas <img> y quieres un tamaño fijo: */
-  width: 120px;
+  width: 100%;
   height: auto;
 }
 
 .contenedor h2 {
   margin-bottom: 1rem;  /* ajusta a tu gusto */
+}
+
+.contenedor h1 {
+  margin-bottom: 1rem;  /* ajusta a tu gusto */
+  text-align: center;
 }
 
 .titulo {
