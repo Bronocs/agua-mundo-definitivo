@@ -9,14 +9,10 @@ export default function Agregar() {
   const [nombreProyecto, setNombreProyecto] = useState('');
   const modalRef = useRef(null);
 
-  // Cuando mostrarModal pasa a true, desplazamos la ventana arriba
+  // Cuando mostrarModal pase a true, desplazamos la vista hasta el modal
   useEffect(() => {
-    if (mostrarModal) {
-      // Opción A: llevar todo el scroll de la página al tope
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      // Opción B: centrar la vista justo en el modal
-      // modalRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (mostrarModal && modalRef.current) {
+      modalRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [mostrarModal]);
 
@@ -62,7 +58,7 @@ export default function Agregar() {
     <div className={styles.contenedor}>
       <h2>Agregar Pedido</h2>
 
-      {/* Campo para el nombre del proyecto */}
+      {/* Nombre del proyecto */}
       <div style={{ marginBottom: '1.5rem' }}>
         <label htmlFor="nombreProyecto" style={{ fontWeight: 'bold' }}>
           Nombre del Proyecto:
@@ -84,25 +80,29 @@ export default function Agregar() {
         />
       </div>
 
+      {/* Botones */}
       <div className={styles.botones}>
         <button onClick={() => setMostrarModal(true)}>➕</button>
         <button onClick={enviarPedidos}>➡️</button>
       </div>
 
+      {/* Lista de materiales */}
       {materiales.length === 0 ? (
         <p className={styles.sinDatos}>Sin datos</p>
       ) : (
         <ul className={styles.materialesLista}>
           {materiales.map((item, i) => (
             <li key={i}>
-              {item.nombre} - {item.cantidad} {item.unidad} {item.comentario && `(${item.comentario})`}
+              {item.nombre} - {item.cantidad} {item.unidad}{' '}
+              {item.comentario && `(${item.comentario})`}
             </li>
           ))}
         </ul>
       )}
 
+      {/* Modal */}
       {mostrarModal && (
-        // Este div tiene la ref para scrollIntoView si la usas
+        // Apuntamos la ref al nodo que contendrá el .modal
         <div ref={modalRef}>
           <ModalAgregarProducto
             onClose={() => setMostrarModal(false)}
