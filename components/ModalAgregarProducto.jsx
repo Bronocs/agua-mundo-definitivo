@@ -66,7 +66,15 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        <h3>AÑADIR PRODUCTO</h3>
+        <div className={styles.header}>
+          <button type="button" className={styles.iconBtn} onClick={onBack}>
+            ←
+          </button>
+          <h3 className={styles.title}>AÑADIR PRODUCTO</h3>
+          <button type="button" className={styles.iconBtn} onClick={onClose}>
+            ✕
+          </button>
+        </div>        
 
         {!modoLibre && !seleccionado && (
           <>
@@ -78,7 +86,6 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
                 onChange={handleInputChange}
               />
             </div>
-            <button className={styles.btnCancelar} onClick={onClose}>❌ CANCELAR</button>
             <button className={styles.btnLibre} onClick={() => {
               setModoLibre(true);
               setSeleccionado(null);
@@ -137,8 +144,6 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
               </>
             )}
             {!modoLibre && <p><strong>{seleccionado?.arreglo_descripcion}</strong></p>}
-            <button className={styles.btnCancelar} onClick={onClose}>❌ CANCELAR</button>
-            <button className={styles.btnAtras} onClick={e => setSeleccionado(null)}>◀ ATRÁS</button>
             <input
               type="number"
               placeholder="Cantidad"

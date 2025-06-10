@@ -34,6 +34,33 @@
   overflow-y: auto;
 }
 
+/* Header con flecha, título y close */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+/* Botones de ícono sin fondo */
+.iconBtn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+/* Título centrado */
+.title {
+  flex: 1;
+  margin: 0;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+}
 
 .searchBar input {
   width: 100%;
