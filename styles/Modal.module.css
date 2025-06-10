@@ -28,10 +28,15 @@
 
 /* Header: fijo, no crece ni hace scroll */
 .modal-header {
-  flex: 0 0 auto;
-  padding: 1.5rem;
+  position: sticky;
+  top: 0;
+  background: #fff;    /* para tapar contenido que sube por debajo */
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  z-index: 1;
   border-bottom: 1px solid #eee;
 }
+
 
 /* Body: ocupa el resto, hace scroll si excede */
 .modal-body {
