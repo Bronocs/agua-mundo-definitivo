@@ -14,7 +14,6 @@
 
   /* opcional: separa unos píxeles desde arriba */
   padding-top: 2rem;
-
   z-index: 1000;
 }
 
@@ -40,7 +39,6 @@
   align-items: center;
   vertical-align:middle;
   grid-template-columns: auto 1fr auto;
-  border-bottom: 1px solid #eee;
 }
 
 /* Botones de ícono sin fondo */
