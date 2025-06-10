@@ -162,6 +162,7 @@
   width: 50px;
   background: #95a89c;
   color: #454e48;
+  margin-right: auto;
 }
 
 /* Botón CERRAR: podrías usar otro color, p.ej. rojo suave */
@@ -169,6 +170,7 @@
   width: 50px;
   background: #ffe5e5;
   color: #cc0000;
+  margin-left: auto;
 }
 
 /* Para que iconBtn controle solo el tamaño del texto/ícono */
