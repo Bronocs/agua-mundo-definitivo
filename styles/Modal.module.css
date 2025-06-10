@@ -17,34 +17,14 @@
   background: #fff;
   width: 95%;
   max-width: 400px;
-  padding: 0;              /* Pasamos el padding a los hijos */
+  padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-  
   display: flex;
   flex-direction: column;
-  max-height: 90vh;        /* Límite total */
-}
-
-/* Header: fijo, no crece ni hace scroll */
-.modal-header {
-  position: sticky;
-  top: 0;
-  background: #fff;    /* para tapar contenido que sube por debajo */
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
-  z-index: 1;
+  gap: 1rem;
+  max-height: 90vh;
   overflow-y: auto;
-  border-bottom: 1px solid #eee;
-}
-
-
-/* Body: ocupa el resto, hace scroll si excede */
-.modal-body {
-  flex: 1 1 auto;
-  padding: 1.5rem;
-  overflow-y: auto;
-  gap: 1rem;               /* si quieres mantener el gap */
 }
 
 .searchBar input {
