@@ -1,36 +1,3 @@
-.contenedor2 {
-  /* para centrar todo vertical y horizontalmente */
-  display: flex;
-  flex-direction: column;
-  align-items: center;      /* centra horizontalmente */
-  justify-content: center;  /* centra verticalmente */
-  min-height: 100vh;        /* ocupa toda la altura de la ventana */
-  padding: 1rem;            /* un poco de espacio interior */
-  display: flex;
-  align-items: flex-start;    /* en lugar de center */
-  justify-content: center;    /* mantiene el centrado horizontal */
-  max-width: 600px;
-
-  /* opcional: separa unos píxeles desde arriba */
-  padding-top: 2rem;
-
-  z-index: 1000;
-}
-
-.contenedor2 h1 {
-  margin-bottom: 2rem;      /* separa el título de los botones */
-  text-align: center;       /* asegura que el texto quede centrado */
-}
-
-.botones2 {
-  display: flex;
-  flex-direction: column;   /* pone los botones en columna */
-  gap: 1rem;                /* espacio vertical entre cada botón */
-  width: 100%;
-  max-width: 200px;         /* opcional, para que no se extienda demasiado */
-  flex-wrap: wrap;
-}
-
 .contenedor {
   max-width: 600px;
   margin: 0 auto;
