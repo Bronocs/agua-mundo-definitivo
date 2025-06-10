@@ -5,6 +5,10 @@
   font-family: sans-serif;
 }
 
+.contenedor h2 {
+  margin-bottom: 1rem;  /* ajusta a tu gusto */
+}
+
 .titulo {
   text-align: center;
   font-size: 1.5rem;

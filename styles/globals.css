@@ -16,6 +16,30 @@ body {
   overflow-x: hidden;
 }
 
+.contenedor {
+  /* para centrar todo vertical y horizontalmente */
+  display: flex;
+  flex-direction: column;
+  align-items: center;      /* centra horizontalmente */
+  justify-content: center;  /* centra verticalmente */
+  min-height: 100vh;        /* ocupa toda la altura de la ventana */
+  padding: 1rem;            /* un poco de espacio interior */
+}
+
+.contenedor h1 {
+  margin-bottom: 2rem;      /* separa el título de los botones */
+  text-align: center;       /* asegura que el texto quede centrado */
+}
+
+.botones {
+  display: flex;
+  flex-direction: column;   /* pone los botones en columna */
+  gap: 1rem;                /* espacio vertical entre cada botón */
+  width: 100%;
+  max-width: 200px;         /* opcional, para que no se extienda demasiado */
+}
+
+
 body {
   color: var(--foreground);
   background: var(--background);

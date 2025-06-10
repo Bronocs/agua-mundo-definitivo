@@ -121,7 +121,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
             {modoLibre && (
               <>
                 <button className={styles.btnCancelar} onClick={onClose}>❌ CANCELAR</button>
-                <button className={styles.btnAtras} onClick={e => setModoLibre(false)}>❌ Atras</button>
+                <button className={styles.btnAtras} onClick={e => setModoLibre(false)}>◀ ATRÁS</button>
                 <input
                   type="text"
                   placeholder="Nombre del producto"
@@ -140,7 +140,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
             )}
             {!modoLibre && <p><strong>{seleccionado?.arreglo_descripcion}</strong></p>}
             <button className={styles.btnCancelar} onClick={onClose}>❌ CANCELAR</button>
-            <button className={styles.btnAtras} onClick={e => setSeleccionado(null)}>❌ Atras</button>
+            <button className={styles.btnAtras} onClick={e => setSeleccionado(null)}>◀ ATRÁS</button>
             <input
               type="number"
               placeholder="Cantidad"
