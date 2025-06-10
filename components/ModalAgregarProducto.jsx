@@ -49,6 +49,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
   const handleInputChange = e => {
     setBusqueda(e.target.value);
     debouncedBuscar(e.target.value);
+    setNombreLibre(e.target.value)
   };
 
   const handleSubmit = () => {
@@ -123,7 +124,6 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
                   type="text"
                   placeholder="Nombre del producto"
                   value={nombreLibre}
-                  defaultValue = {busqueda}
                   onChange={e => setNombreLibre(e.target.value)}
                   required
                 />
