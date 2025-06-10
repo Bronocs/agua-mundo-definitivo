@@ -123,6 +123,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
                   type="text"
                   placeholder="Nombre del producto"
                   value={nombreLibre}
+                  defaultValue = {busqueda}
                   onChange={e => setNombreLibre(e.target.value)}
                   required
                 />
