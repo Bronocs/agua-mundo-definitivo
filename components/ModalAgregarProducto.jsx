@@ -67,7 +67,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <button type="button" className={styles.iconBtn} onClick={e => {setSeleccionado(null); setModoLibre(false);}}>
+          <button type="button" className={`${styles.iconBtn} ${styles.btnAtras}`} onClick={e => {setSeleccionado(null); setModoLibre(false);}}>
             ←
           </button>
           <button className={styles.btnLibre} onClick={() => {
@@ -79,7 +79,7 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
             }}>
               + LIBRE
           </button>
-          <button type="button" className={styles.iconBtn} onClick={onClose}>
+          <button type="button" className={`${styles.iconBtn} ${styles.btnCerrar}`} onClick={onClose}>
             ✕
           </button>
         </div>        
