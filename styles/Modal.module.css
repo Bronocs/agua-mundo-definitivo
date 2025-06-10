@@ -17,14 +17,28 @@
   background: #fff;
   width: 95%;
   max-width: 400px;
-  padding: 1.5rem;
+  padding: 0;              /* Pasamos el padding a los hijos */
   border-radius: 8px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  max-height: 90vh;
+  max-height: 90vh;        /* Límite total */
+}
+
+/* Header: fijo, no crece ni hace scroll */
+.modal-header {
+  flex: 0 0 auto;
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+/* Body: ocupa el resto, hace scroll si excede */
+.modal-body {
+  flex: 1 1 auto;
+  padding: 1.5rem;
   overflow-y: auto;
+  gap: 1rem;               /* si quieres mantener el gap */
 }
 
 .searchBar input {
