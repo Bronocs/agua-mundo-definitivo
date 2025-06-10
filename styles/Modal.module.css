@@ -38,7 +38,7 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  grid-template-columns: auto 1fr auto;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #eee;
 }
@@ -157,12 +157,14 @@
 
 /* Botón ATRÁS: mismo look que LIBRE (o ajusta colores) */
 .btnAtras {
+  max-width: 30px;
   background: #f0f8ff;
   color: #0077cc;
 }
 
 /* Botón CERRAR: podrías usar otro color, p.ej. rojo suave */
 .btnCerrar {
+  max-width: 30px;
   background: #ffe5e5;
   color: #cc0000;
 }
