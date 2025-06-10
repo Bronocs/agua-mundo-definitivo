@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div className={styles.contenedor}>
       <h1>Pedidos Agua Mundo</h1>
-      <div className={styles.botones2}>
+      <div className={styles.botones}>
         <Link href="/agregar">
           <button>➕ Crear Pedido</button>
         </Link>
