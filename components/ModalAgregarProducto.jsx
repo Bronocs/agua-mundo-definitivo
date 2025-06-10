@@ -120,8 +120,6 @@ export default function ModalAgregarProducto({ onClose, onAgregar }) {
           <div className={styles.formulario}>
             {modoLibre && (
               <>
-                <button className={styles.btnCancelar} onClick={onClose}>❌ CANCELAR</button>
-                <button className={styles.btnAtras} onClick={e => setModoLibre(false)}>◀ ATRÁS</button>
                 <input
                   type="text"
                   placeholder="Nombre del producto"
