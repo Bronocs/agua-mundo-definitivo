@@ -8,29 +8,29 @@ async function generarNumeroOrden(sheets, spreadsheetId) {
     range: 'Pedidos_web!A2:A',
     majorDimension: 'COLUMNS',
   });
-  const codigos = resp.data.values?.[0] || [];        // Array de strings ["2025-06-001", "2025-06-002", ...]
+  const codigos = resp.data.values?.[0] || [];
 
-  // 2. Obtenemos el último código no vacío
-  const ultimo = codigos.reverse().find(c => !!c) || ''; 
+  // 2. Obtenemos el último código que tenga prefijo DP-
+  const ultimo = codigos
+    .reverse()
+    .find(c => typeof c === 'string' && c.startsWith('DP-')) || '';
+
   const ahora = new Date();
-  const year = ahora.getFullYear().toString();         // "2025"
-  const month = String(ahora.getMonth() + 1).padStart(2, '0'); // "06"
+  const year = ahora.getFullYear().toString();
+  const month = String(ahora.getMonth() + 1).padStart(2, '0');
 
   let secuencia = 1;
   if (ultimo) {
-    // 3. Separamos año, mes y número de la última orden
-    //    Suponemos formato "YYYY-MM-NNN"
-    const [uYear, uMonth, uSeq] = ultimo.split('-');
+    // Formato "DP-YYYY-MM-NNN"
+    const partes = ultimo.split('-');
+    const [prefix, uYear, uMonth, uSeq] = partes;
     if (uYear === year && uMonth === month) {
-      // Mismo mes: incrementar la secuencia
       secuencia = parseInt(uSeq, 10) + 1;
     }
-    // Si no coincide año/mes, secuencia queda en 1
   }
 
-  // 4. Formateamos con 3 dígitos
-  const seqStr =  "DP" + String(secuencia).padStart(3, '0');
-  return `${year}-${month}-${seqStr}`;
+  const seqStr = String(secuencia).padStart(3, '0');
+  return `DP-${year}-${month}-${seqStr}`;
 }
 
 export default async function handler(req, res) {
@@ -52,14 +52,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Faltan datos requeridos' });
     }
 
-    // Generamos el nuevo número de orden según el mes
     const spreadsheetId = process.env.SHEET_PEDIDOS_ID;
     const numeroOrden = await generarNumeroOrden(sheets, spreadsheetId);
-
-    // Fecha sólo para registrar, puede omitirse en el código
     const fechaActual = new Date().toLocaleDateString('es-PE');
 
-    // Preparamos las filas a agregar
     const valores = productos.map(prod => [
       numeroOrden,
       nombreProyecto,
@@ -70,7 +66,6 @@ export default async function handler(req, res) {
       prod.comentario || ''
     ]);
 
-    // Insertamos las filas
     await sheets.spreadsheets.values.append({
       spreadsheetId,
       range: 'Pedidos_web!A2:G',
