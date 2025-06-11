@@ -6,43 +6,53 @@ export default function VerOrdenes() {
   const [abierto, setAbierto] = useState(null);
   const [verEntregadas, setVerEntregadas] = useState(false);
 
-  // 1. Define fetchOrdenes como función reutilizable
+  // 1. Función para traer órdenes
   const fetchOrdenes = async () => {
     const res = await fetch('/api/ver-ordenes');
     const data = await res.json();
     setOrdenes(data);
   };
 
-  // 2. Llama fetchOrdenes al montar
+  // 2. Al montar, cargamos las órdenes
   useEffect(() => {
     fetchOrdenes();
   }, []);
 
-  // ... (agrupa y filtra las órdenes como ya hacías)
+  // 3. Agrupar filas por número de orden
   const agrupado = {};
   ordenes.forEach(row => {
     const [numeroOrden, nombreProyecto, fecha, nombre, unidad, cantidad, comentario, estado, fechaEntrega] = row;
-
-    // Normaliza el estado
-    const estadoNormalizado = (estado || "").trim().toLowerCase();
+    const estadoNorm = (estado || '').trim().toLowerCase();
 
     if (!agrupado[numeroOrden]) {
       agrupado[numeroOrden] = {
         proyecto: nombreProyecto,
         fecha,
-        estado: estadoNormalizado,
-        fechaEntrega: fechaEntrega || "",
+        estado: estadoNorm,
+        fechaEntrega: fechaEntrega || '',
         productos: []
       };
     }
     agrupado[numeroOrden].productos.push({ nombre, unidad, cantidad, comentario });
   });
 
+  // 4. Convertir a lista y filtrar según entregadas/pendientes
+  let listaOC = Object.entries(agrupado).filter(([, info]) =>
+    verEntregadas
+      ? info.estado === 'entregada'
+      : info.estado !== 'entregada'
+  );
 
-  const listaOC = Object.entries(agrupado)
-    .filter(([, info]) => (verEntregadas ? info.estado === 'entregada' : info.estado !== 'entregada'));
+  // 5. Ordenar por fecha descendente (más recientes primero)
+  listaOC.sort(([, aInfo], [, bInfo]) => {
+    const parseFecha = str => {
+      const [d, m, y] = str.split('/').map(Number);
+      return new Date(y, m - 1, d).getTime();
+    };
+    return parseFecha(bInfo.fecha) - parseFecha(aInfo.fecha);
+  });
 
-  // 3. Usa fetchOrdenes luego de cambiar estado
+  // 6. Cambiar estado de una orden y refrescar lista
   const cambiarEstadoOC = async (numeroOrden, nuevoEstado) => {
     const res = await fetch('/api/cambiar-estado', {
       method: 'POST',
@@ -51,7 +61,7 @@ export default function VerOrdenes() {
     });
     if (res.ok) {
       alert('Estado actualizado');
-      fetchOrdenes(); // ¡Ahora sí refresca con los nuevos datos!
+      fetchOrdenes();
     } else {
       alert('Error actualizando estado');
     }
@@ -59,7 +69,7 @@ export default function VerOrdenes() {
 
   return (
     <div className={styles.contenedor}>
-      <h1>Órdenes {verEntregadas ? "Entregadas" : "Pendientes"}</h1>
+      <h1>Órdenes {verEntregadas ? 'Entregadas' : 'Pendientes'}</h1>
       <button
         style={{
           marginBottom: '1rem',
@@ -73,19 +83,23 @@ export default function VerOrdenes() {
         }}
         onClick={() => setVerEntregadas(v => !v)}
       >
-        {verEntregadas ? "Ver Pendientes" : "Ver Entregadas"}
+        {verEntregadas ? 'Ver Pendientes' : 'Ver Entregadas'}
       </button>
+
       {listaOC.length === 0 ? (
         <p>Cargando...</p>
       ) : (
         listaOC.map(([oc, info], idx) => (
-          <div key={oc} style={{
-            border: '1px solid #ccc',
-            borderRadius: '6px',
-            marginBottom: '1rem',
-            background: '#f8f8f8',
-            boxShadow: abierto === idx ? '0 2px 8px rgba(0,0,0,0.08)' : 'none'
-          }}>
+          <div
+            key={oc}
+            style={{
+              border: '1px solid #ccc',
+              borderRadius: '6px',
+              marginBottom: '1rem',
+              background: '#f8f8f8',
+              boxShadow: abierto === idx ? '0 2px 8px rgba(0,0,0,0.08)' : 'none'
+            }}
+          >
             <button
               style={{
                 width: '100%',
@@ -114,13 +128,19 @@ export default function VerOrdenes() {
                   }}
                   onClick={e => {
                     e.stopPropagation();
-                    cambiarEstadoOC(oc, info.estado === 'entregada' ? 'pendiente' : 'entregada');
+                    cambiarEstadoOC(
+                      oc,
+                      info.estado === 'entregada' ? 'pendiente' : 'entregada'
+                    );
                   }}
                 >
-                  {info.estado === 'entregada' ? "Marcar como pendiente" : "Marcar como entregada"}
+                  {info.estado === 'entregada'
+                    ? 'Marcar como pendiente'
+                    : 'Marcar como entregada'}
                 </button>
               </span>
             </button>
+
             {abierto === idx && (
               <div style={{ padding: '1rem', borderTop: '1px solid #ddd', background: 'white' }}>
                 <strong>Productos:</strong>
@@ -128,7 +148,7 @@ export default function VerOrdenes() {
                   {info.productos.map((prod, i) => (
                     <li key={i} style={{ marginBottom: '0.5rem' }}>
                       <span style={{ fontWeight: 500 }}>{prod.nombre}</span>
-                      {" - "}{prod.cantidad} {prod.unidad}
+                      {' - '}{prod.cantidad} {prod.unidad}
                       {prod.comentario && (
                         <span style={{ color: '#888' }}> ({prod.comentario})</span>
                       )}
@@ -137,7 +157,7 @@ export default function VerOrdenes() {
                 </ul>
                 {info.estado === 'entregada' && (
                   <div style={{ fontSize: '0.95em', color: '#333', marginTop: 6 }}>
-                    <strong>Fecha de entrega:</strong> {info.fechaEntrega || "Sin fecha"}
+                    <strong>Fecha de entrega:</strong> {info.fechaEntrega || 'Sin fecha'}
                   </div>
                 )}
               </div>
