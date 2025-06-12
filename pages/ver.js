@@ -99,12 +99,9 @@ export default function VerOrdenes() {
       ) : (
         listaOC.map(([oc, info], idx) => (
           <div
+            className={styles.botones_pendientes}
             key={oc}
             style={{
-              border: '1px solid #ccc',
-              borderRadius: '6px',
-              marginBottom: '1rem',
-              background: '#f8f8f8',
               boxShadow: abierto === idx ? '0 2px 8px rgba(0,0,0,0.08)' : 'none'
             }}
           >

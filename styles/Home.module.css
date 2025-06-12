@@ -40,6 +40,14 @@
   padding: 0rem 1rem;
 }
 
+.botones_pendientes {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  background: #f8f8f8;
+  width: 100%;
+}
+
 .tabla {
   width: 100%;
   border-collapse: collapse;
