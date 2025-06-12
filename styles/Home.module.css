@@ -117,8 +117,13 @@
   vertical-align:middle;
   grid-template-columns: auto 1fr auto;
   margin-bottom: 1rem;
+  padding: 0 1rem;
 }
-
+.bloque_busqueda {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  padding: 0 1rem;
+}
 /* Estilos base que ya tenías */
 .btnLibre2 {
   width: 100%;
