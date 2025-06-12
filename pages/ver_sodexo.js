@@ -27,7 +27,7 @@ export default function VerOrdenes() {
 
   // Filtra por pendientes/entregadas
   const filtered = parsed.filter(item => {
-    const isDelivered = item.status === 'entregada';
+    const isDelivered = item.status === 'entregado';
     return showDelivered ? isDelivered : !isDelivered;
   }).filter(item => {
     const term = search.toLowerCase();
