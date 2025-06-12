@@ -21,7 +21,7 @@ export default function Agregar() {
   };
 
   const irAEnlace = () => {
-    window.location.href = 'https://https://agua-mundo-definitivo.vercel.app/';
+    window.location.href = 'https://agua-mundo-definitivo.vercel.app/';
     // o window.open('https://ejemplo.com','_blank') para nueva pestaña
   };
 
