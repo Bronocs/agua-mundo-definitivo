@@ -160,13 +160,17 @@
 }
 
 @media (max-width: 500px) {
-  .botones, .botones_abajo {
+  .botones, .botones_abajo{
     display: flex;
     flex-direction: column;
     align-items: center;    /* centra los botones */
     gap: 0.75rem;            /* espacio vertical entre ellos */
     width: 100%;
     padding: 0 1rem;        /* margen lateral */
+  }
+  
+  .botones_abajo button{
+    width: 100%;
   }
 
   .botones button {
