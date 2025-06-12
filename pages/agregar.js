@@ -65,7 +65,7 @@ export default function Agregar() {
         <button type="button" className={`${styles.iconBtn2} ${styles.btnAtras2}`} onClick={irAEnlace}>
           ←
         </button>
-        <h2 className={styles.btnLibre}>Agregar producto</h2>
+        <h2 className={styles.btnLibre2}>Agregar producto</h2>
         <button type="button" className={`${styles.iconBtn2} ${styles.btnCerrar2}`} onClick={enviarPedidos}>✕
         </button>
       </div>
