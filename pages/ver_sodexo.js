@@ -16,27 +16,35 @@ export default function VerOrdenes() {
     fetchData();
   }, []);
 
-  // Extrae campos relevantes de cada fila
+  // Extrae y normaliza campos relevantes de cada fila
   const parsed = ordenes.map(row_sodexo => ({
     nroOC:      row_sodexo[10] || '',
     prioridad:  row_sodexo[7]  || '',
     direccion:  row_sodexo[12] || '',
     linkOC:     row_sodexo[14] || '',
-    status:     (row_sodexo[8] || '').toLowerCase().trim(),
+    // Normalización robusta del status
+    status: (row_sodexo[8] || '')
+      .normalize('NFD') // elimina tildes
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim(),
   }));
 
   // Filtro por entregadas/pendientes según showDelivered
-  const filtered = parsed.filter(item => {
-    const isDelivered = item.status === 'entregado';
-    return showDelivered ? isDelivered : !isDelivered;
-  }).filter(item => {
-    const term = search.toLowerCase();
-    return (
-      item.nroOC.toLowerCase().includes(term) ||
-      item.prioridad.toLowerCase().includes(term) ||
-      item.direccion.toLowerCase().includes(term)
-    );
-  });
+  const filtered = parsed
+    .filter(item => {
+      // Acepta "entregado", "entregada", etc.
+      const isDelivered = item.status.includes('entregado');
+      return showDelivered ? isDelivered : !isDelivered;
+    })
+    .filter(item => {
+      const term = search.toLowerCase();
+      return (
+        item.nroOC.toLowerCase().includes(term) ||
+        item.prioridad.toLowerCase().includes(term) ||
+        item.direccion.toLowerCase().includes(term)
+      );
+    });
 
   return (
     <div className={styles.container}>
@@ -68,6 +76,11 @@ export default function VerOrdenes() {
       />
 
       <ul className={styles.list}>
+        {filtered.length === 0 && (
+          <li className={styles.item} style={{ textAlign: 'center', color: '#888' }}>
+            No hay órdenes para mostrar.
+          </li>
+        )}
         {filtered.map((o, i) => (
           <li key={i} className={styles.item}>
             <div>
