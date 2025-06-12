@@ -95,7 +95,6 @@ export default function Agregar() {
       {/* Botones */}
       <div className={styles.botones_abajo}>
         <button onClick={() => setMostrarModal(true)}>➕</button>
-        <button onClick={enviarPedidos}>➡️</button>
       </div>
 
       {/* Lista de materiales */}

@@ -115,6 +115,7 @@
 }
 
 .header2 {
+  width: 100%;
   display: flex;
   align-items: center;
   vertical-align:middle;
@@ -132,17 +133,15 @@
 
 /* Botón ATRÁS: mismo look que LIBRE (o ajusta colores) */
 .btnAtras2 {
-  width: 50px;
-  background: #95a89c;
-  color: #454e48;
+  background: #a7e5fd;
+  color: #326579;
   margin-right: auto;
 }
 
 /* Botón CERRAR: podrías usar otro color, p.ej. rojo suave */
 .btnCerrar2 {
-  width: 50px;
-  background: #ffe5e5;
-  color: #cc0000;
+  background: #b7f7d0;
+  color: #1f5c36;
   margin-left: auto;
 }
 
