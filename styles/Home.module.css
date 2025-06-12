@@ -61,6 +61,11 @@
   text-align: left;
 }
 
+.botones_abajo button {
+  font-size: 1.5rem;
+  padding: 0.5rem 1rem;
+  flex: 1 1 30%;
+}
 
 .botones button {
   font-size: 1.5rem;
