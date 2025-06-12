@@ -20,6 +20,11 @@ export default function Agregar() {
     setMateriales([...materiales, producto]);
   };
 
+  const irAEnlace = () => {
+    window.location.href = 'https://https://agua-mundo-definitivo.vercel.app/';
+    // o window.open('https://ejemplo.com','_blank') para nueva pestaña
+  };
+
   const enviarPedidos = async () => {
     if (!nombreProyecto.trim()) {
       alert("Por favor, ingresa el nombre del proyecto");
@@ -56,7 +61,14 @@ export default function Agregar() {
 
   return (
     <div className={styles.contenedor}>
-      <h2>Agregar Pedido</h2>
+      <div className={styles.header2}>
+        <button type="button" className={`${styles.iconBtn2} ${styles.btnAtras2}`} onClick={irAEnlace}>
+          ←
+        </button>
+        <h2 className={styles.btnLibre}>Agregar producto</h2>
+        <button type="button" className={`${styles.iconBtn2} ${styles.btnCerrar2}`} onClick={onClose2}>✕
+        </button>
+      </div>
 
       {/* Nombre del proyecto */}
       <div style={{ marginBottom: '1.5rem' }}>

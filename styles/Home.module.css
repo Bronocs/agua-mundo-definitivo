@@ -108,6 +108,44 @@
   margin-bottom: 0.5rem;
 }
 
+.header2 {
+  display: flex;
+  align-items: center;
+  vertical-align:middle;
+  grid-template-columns: auto 1fr auto;
+}
+
+/* Estilos base que ya tenías */
+.btnLibre2 {
+  width: 100%;
+  padding: 0.75rem;
+  margin-right: 25px;
+  margin-left: 25px;
+}
+
+/* Botón ATRÁS: mismo look que LIBRE (o ajusta colores) */
+.btnAtras2 {
+  width: 50px;
+  background: #95a89c;
+  color: #454e48;
+  margin-right: auto;
+}
+
+/* Botón CERRAR: podrías usar otro color, p.ej. rojo suave */
+.btnCerrar2 {
+  width: 50px;
+  background: #ffe5e5;
+  color: #cc0000;
+  margin-left: auto;
+}
+
+/* Para que iconBtn controle solo el tamaño del texto/ícono */
+.iconBtn2 {
+  font-size: 1rem;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: none;
+}
 
 .modalBotones {
   display: flex;
