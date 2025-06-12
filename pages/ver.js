@@ -40,7 +40,7 @@ export default function VerOrdenes() {
     window.location.href = 'https://agua-mundo-definitivo.vercel.app/';
     // o window.open('https://ejemplo.com','_blank') para nueva pestaña
   };
-
+  
   // 4. Convertir a lista y filtrar según entregadas/pendientes
   let listaOC = Object.entries(agrupado).filter(([, info]) =>
     verEntregadas
@@ -76,7 +76,7 @@ export default function VerOrdenes() {
     <div className={styles.contenedor}>
       <div className={styles.header2}>
         <button type="button" className={`${styles.iconBtn2} ${styles.btnAtras2}`} onClick={irAEnlace}>Inicio</button>
-        <h2 className={styles.btnLibre2}>Órdenes {verEntregadas ? 'Entregadas' : 'Pendientes'}</h2>
+        <h1 className={styles.btnLibre2}>Órdenes {verEntregadas ? 'Entregadas' : 'Pendientes'}</h1>
       </div>
       <button
         style={{
