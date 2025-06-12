@@ -18,14 +18,14 @@ export default function VerOrdenes() {
 
   // Extrae campos relevantes de cada fila
   const parsed = ordenes.map(row_sodexo => ({
-    nroOC: row_sodexo[10] || '',
-    prioridad: row_sodexo[7] || '',
-    direccion: row_sodexo[12] || '',
-    linkOC:    row_sodexo[14] || '',
-    status:    (row_sodexo[8] || '').toLowerCase(),
+    nroOC:      row_sodexo[10] || '',
+    prioridad:  row_sodexo[7]  || '',
+    direccion:  row_sodexo[12] || '',
+    linkOC:     row_sodexo[14] || '',
+    status:     (row_sodexo[8] || '').toLowerCase().trim(),
   }));
 
-  // Filtra por pendientes/entregadas
+  // Filtro por entregadas/pendientes según showDelivered
   const filtered = parsed.filter(item => {
     const isDelivered = item.status === 'entregado';
     return showDelivered ? isDelivered : !isDelivered;
@@ -41,16 +41,23 @@ export default function VerOrdenes() {
   return (
     <div className={styles.container}>
       <h1>Órdenes {showDelivered ? 'Entregadas' : 'Pendientes'}</h1>
-      <div className={styles.controls}>
-        <button onClick={() => setShowDelivered(false)}
-                className={!showDelivered ? styles.active : ''}>
-          Pendientes
-        </button>
-        <button onClick={() => setShowDelivered(true)}
-                className={showDelivered ? styles.active : ''}>
-          Entregadas
-        </button>
-      </div>
+      <button
+        onClick={() => setShowDelivered(v => !v)}
+        className={styles.toggleBtn}
+        style={{
+          margin: '0 auto 1.5rem auto',
+          display: 'block',
+          background: '#0074D9',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px',
+          padding: '0.6rem 1.2rem',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+        }}
+      >
+        {showDelivered ? 'Ver Pendientes' : 'Ver Entregadas'}
+      </button>
 
       <input
         type="text"
