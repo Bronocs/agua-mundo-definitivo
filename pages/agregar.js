@@ -63,10 +63,10 @@ export default function Agregar() {
     <div className={styles.contenedor}>
       <div className={styles.header2}>
         <button type="button" className={`${styles.iconBtn2} ${styles.btnAtras2}`} onClick={irAEnlace}>
-          ←
+          Inicio
         </button>
         <h2 className={styles.btnLibre2}>Agregar producto</h2>
-        <button type="button" className={`${styles.iconBtn2} ${styles.btnCerrar2}`} onClick={enviarPedidos}>✕
+        <button type="button" className={`${styles.iconBtn2} ${styles.btnCerrar2}`} onClick={enviarPedidos}>Enviar
         </button>
       </div>
 
