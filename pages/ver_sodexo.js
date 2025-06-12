@@ -9,7 +9,7 @@ export default function VerOrdenes() {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch('/api/ver-ordenes');
+      const res = await fetch('/api/ver-ordenes_sodexo');
       const data = await res.json();
       setOrdenes(data);
     }
