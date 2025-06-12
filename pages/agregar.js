@@ -93,7 +93,7 @@ export default function Agregar() {
       </div>
 
       {/* Botones */}
-      <div className={styles.botones}>
+      <div className={styles.botones_abajo}>
         <button onClick={() => setMostrarModal(true)}>➕</button>
         <button onClick={enviarPedidos}>➡️</button>
       </div>

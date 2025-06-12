@@ -153,6 +153,10 @@
 }
 
 @media (max-width: 500px) {
+  .botones_abajo {
+    flex-direction: column;
+  }
+
   .botones {
     display: flex;
     flex-direction: column;
