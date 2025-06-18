@@ -10,7 +10,7 @@ export default function Home() {
         alt="Logo Agua Mundo"
         className={styles.logo}
       />
-      <h1>Pedidos Agua Mundo</h1>
+      <h1>Pedidos Agua Mundo lite</h1>
       <div className={styles.botones}>
         <Link href="/agregar">
           <button>➕ Crear Pedido</button>
