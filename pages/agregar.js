@@ -101,7 +101,10 @@ export default function Agregar() {
                     onKeyDown={e => {
                       if (e.key === 'Enter') e.target.blur();
                     }}
-                    style={{ width: '80px' }}
+                    style={{ width: '80px', 
+                            padding: '0.4rem',
+                            border: '1px solid #ccc'
+                    }}
                   />
                 </td>
                 <td style={{ padding: '0.3rem' }}>
@@ -113,7 +116,10 @@ export default function Agregar() {
                     onKeyDown={e => {
                       if (e.key === 'Enter') e.target.blur();
                     }}
-                    style={{ width: '100%' }}
+                    style={{ width: '100%',
+                             padding: '0.4rem',
+                            border: '1px solid #ccc'
+                    }}
                   />
                 </td>
               </tr>
