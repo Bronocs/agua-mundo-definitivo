@@ -12,16 +12,26 @@ export default function Agregar() {
     const nuevosMateriales = materiales.map((mat, i) =>
       i === idx ? { ...mat, [campo]: valor } : mat
     );
-    setMateriales(nuevosMateriales);
 
-    // Si esta es la última fila, y tiene datos en ambos campos, agrega una nueva fila vacía
+    // Si esta es la última fila y tiene datos en ambos campos, agrega una nueva fila vacía
+    let materialesActualizados = nuevosMateriales;
     if (
       idx === materiales.length - 1 &&
       nuevosMateriales[idx].cantidad.trim() &&
       nuevosMateriales[idx].producto.trim()
     ) {
-      setMateriales([...nuevosMateriales, { cantidad: '', producto: '' }]);
+      materialesActualizados = [...nuevosMateriales, { cantidad: '', producto: '' }];
     }
+
+    // Elimina filas vacías, dejando solo UNA al final si todas están vacías o solo la última vacía
+    // Mantiene la primera vacía si es la única
+    const noVacias = materialesActualizados.filter(
+      (m, i) =>
+        i === materialesActualizados.length - 1 || // Deja la última aunque esté vacía
+        m.cantidad.trim() !== '' ||
+        m.producto.trim() !== ''
+    );
+    setMateriales(noVacias);
   };
 
   // Eliminar filas vacías antes de enviar
