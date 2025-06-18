@@ -11,6 +11,111 @@
   min-height: 100vh;
 }
 
+/* Contenedor principal */
+.contenedor {
+  max-width: 500px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.10);
+  padding: 2rem;
+}
+
+/* Header y botones (ajusta si ya los tienes) */
+.header2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.btnAtras2, .btnCerrar2 {
+  background: #b2ebf2;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btnCerrar2 {
+  background: #8ee28e;
+}
+
+.btnLibre2 {
+  font-size: 1.5rem;
+  text-align: center;
+  flex: 1;
+  margin: 0 1rem;
+}
+
+/* Inputs generales */
+.input {
+  width: 100%;
+  padding: 0.7rem;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Tabla de materiales */
+.tablaMateriales {
+  margin-top: 2rem;
+}
+
+.filaHeader {
+  display: flex;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.fila {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.colCantidad {
+  flex: 0 0 100px;
+  padding-left: 2px;
+}
+
+.colProducto {
+  flex: 1;
+}
+
+.inputTabla {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  width: 100%;
+  background: #f8f8f8;
+  transition: border 0.2s;
+}
+
+.inputTabla:focus {
+  border: 1.5px solid #0097a7;
+  background: #e0f7fa;
+}
+
+/* Responsive para móvil */
+@media (max-width: 600px) {
+  .contenedor {
+    padding: 1rem;
+    max-width: 98vw;
+  }
+  .fila, .filaHeader {
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .colCantidad, .colProducto {
+    padding-left: 0;
+  }
+}
+
+
 .logo {
   margin-bottom: 1.5rem;  /* separa el logo del título */
   width: 100%;

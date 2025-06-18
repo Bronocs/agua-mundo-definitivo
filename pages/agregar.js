@@ -2,35 +2,35 @@ import { useState } from 'react';
 import styles from '../styles/Home.module.css';
 
 export default function Agregar() {
-  const [materiales, setMateriales] = useState([
-    { cantidad: '', producto: '' }
-  ]);
+  const [materiales, setMateriales] = useState([{ cantidad: '', producto: '' }]);
   const [nombreProyecto, setNombreProyecto] = useState('');
 
-  // Maneja cambios en los inputs de la tabla
+  // Cambia valor en la fila indicada
   const handleInputChange = (idx, campo, valor) => {
     const nuevosMateriales = materiales.map((mat, i) =>
       i === idx ? { ...mat, [campo]: valor } : mat
     );
     setMateriales(nuevosMateriales);
+  };
 
-    // Si esta es la última fila, y tiene datos en ambos campos, agrega una nueva fila vacía
+  // Presionar Enter: agrega fila solo si ambos campos están llenos y es la última fila
+  const handleInputEnter = (idx, e) => {
     if (
-      idx === materiales.length - 1 &&
-      nuevosMateriales[idx].cantidad.trim() &&
-      nuevosMateriales[idx].producto.trim()
+      e.key === 'Enter' &&
+      materiales[idx].cantidad.trim() &&
+      materiales[idx].producto.trim() &&
+      idx === materiales.length - 1
     ) {
-      setMateriales([...nuevosMateriales, { cantidad: '', producto: '' }]);
+      setMateriales([...materiales, { cantidad: '', producto: '' }]);
     }
   };
 
-  // Eliminar filas vacías antes de enviar
+  // Devuelve solo filas completas
   const getMaterialesFinal = () =>
     materiales.filter(
       m => m.cantidad.trim() !== '' && m.producto.trim() !== ''
     );
 
-  // Envía los materiales (ejemplo)
   const enviarPedidos = () => {
     const materialesFinal = getMaterialesFinal();
     if (!nombreProyecto.trim()) {
@@ -41,7 +41,7 @@ export default function Agregar() {
       alert('Agrega al menos un producto.');
       return;
     }
-    // Aquí tu lógica de envío, por ejemplo usando fetch
+    // Aquí va tu lógica real de envío:
     alert(JSON.stringify({ nombreProyecto, productos: materialesFinal }, null, 2));
   };
 
@@ -53,63 +53,54 @@ export default function Agregar() {
         <button className={`${styles.iconBtn2} ${styles.btnCerrar2}`} onClick={enviarPedidos}>Enviar</button>
       </div>
 
-      <div style={{ margin: '1rem 0' }}>
-        <label style={{ fontWeight: 'bold' }}>Nombre del Proyecto:</label>
+      <div className={styles.bloque_busqueda}>
+        <label htmlFor="nombreProyecto" style={{ fontWeight: 'bold' }}>
+          Nombre del Proyecto:
+        </label>
         <input
+          id="nombreProyecto"
           type="text"
           placeholder="Ejemplo: Planta Sur, Mantenimiento 2024, etc."
           value={nombreProyecto}
           onChange={e => setNombreProyecto(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '0.8rem',
-            fontSize: '1rem',
-            marginTop: '0.5rem',
-            borderRadius: '6px',
-            border: '1px solid #ccc'
-          }}
+          className={styles.input}
         />
       </div>
 
-      <div style={{ marginTop: '2rem', width: '100%' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={{ textAlign: 'left', padding: '0.5rem' }}>Cantidad</th>
-              <th style={{ textAlign: 'left', padding: '0.5rem' }}>Producto</th>
-            </tr>
-          </thead>
-          <tbody>
-            {materiales.map((fila, idx) => (
-              <tr key={idx}>
-                <td style={{ padding: '0.3rem' }}>
-                  <input
-                    type="text"
-                    value={fila.cantidad}
-                    placeholder="Cantidad"
-                    onChange={e => handleInputChange(idx, 'cantidad', e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter') e.target.blur();
-                    }}
-                    style={{ width: '80px' }}
-                  />
-                </td>
-                <td style={{ padding: '0.3rem' }}>
-                  <input
-                    type="text"
-                    value={fila.producto}
-                    placeholder="Producto"
-                    onChange={e => handleInputChange(idx, 'producto', e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter') e.target.blur();
-                    }}
-                    style={{ width: '100%' }}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className={styles.tablaMateriales}>
+        <div className={styles.filaHeader}>
+          <div className={styles.colCantidad}>Cantidad</div>
+          <div className={styles.colProducto}>Producto</div>
+        </div>
+        {materiales.map((fila, idx) => {
+          // Mostrar la primera fila siempre, las demás solo si tienen contenido
+          if (
+            idx === 0 ||
+            (fila.cantidad.trim() !== '' || fila.producto.trim() !== '')
+          ) {
+            return (
+              <div className={styles.fila} key={idx}>
+                <input
+                  className={styles.inputTabla}
+                  type="text"
+                  placeholder="Cantidad"
+                  value={fila.cantidad}
+                  onChange={e => handleInputChange(idx, 'cantidad', e.target.value)}
+                  onKeyDown={e => handleInputEnter(idx, e)}
+                />
+                <input
+                  className={styles.inputTabla}
+                  type="text"
+                  placeholder="Producto"
+                  value={fila.producto}
+                  onChange={e => handleInputChange(idx, 'producto', e.target.value)}
+                  onKeyDown={e => handleInputEnter(idx, e)}
+                />
+              </div>
+            );
+          }
+          return null;
+        })}
       </div>
     </div>
   );
