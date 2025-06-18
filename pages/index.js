@@ -18,9 +18,6 @@ export default function Home() {
         <Link href="/ver">
           <button>📄 Ver Órdenes</button>
         </Link>
-        <Link href="/ver_sodexo">
-          <button>✔ Ver Órdenes Sodexo</button>
-        </Link>
       </div>
     </div>
   );
