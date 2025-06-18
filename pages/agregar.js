@@ -14,16 +14,22 @@ export default function Agregar() {
   };
 
   // Presionar Enter: agrega fila solo si ambos campos están llenos y es la última fila
-  const handleInputEnter = (idx, e) => {
-    if (
-      e.key === 'Enter' &&
-      materiales[idx].cantidad.trim() &&
-      materiales[idx].producto.trim() &&
-      idx === materiales.length - 1
-    ) {
-      setMateriales([...materiales, { cantidad: '', producto: '' }]);
+  const handleInputEnter = (idx, campo, e) => {
+    if (e.key === 'Enter') {
+      // Captura los valores de la fila actual *en ese momento*
+      const cantidadActual = (campo === 'cantidad' ? e.target.value : materiales[idx].cantidad).trim();
+      const productoActual = (campo === 'producto' ? e.target.value : materiales[idx].producto).trim();
+      // Última fila, ambos llenos
+      if (
+        cantidadActual &&
+        productoActual &&
+        idx === materiales.length - 1
+      ) {
+        setMateriales([...materiales, { cantidad: '', producto: '' }]);
+      }
     }
   };
+
 
   // Devuelve solo filas completas
   const getMaterialesFinal = () =>
@@ -86,7 +92,7 @@ export default function Agregar() {
                   placeholder="Cantidad"
                   value={fila.cantidad}
                   onChange={e => handleInputChange(idx, 'cantidad', e.target.value)}
-                  onKeyDown={e => handleInputEnter(idx, e)}
+                  onKeyDown={e => handleInputEnter(idx, 'cantidad', e)}
                 />
                 <input
                   className={styles.inputTabla}
@@ -94,7 +100,7 @@ export default function Agregar() {
                   placeholder="Producto"
                   value={fila.producto}
                   onChange={e => handleInputChange(idx, 'producto', e.target.value)}
-                  onKeyDown={e => handleInputEnter(idx, e)}
+                  onKeyDown={e => handleInputEnter(idx, 'producto', e)}
                 />
               </div>
             );
