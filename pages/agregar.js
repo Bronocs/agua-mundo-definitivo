@@ -103,7 +103,8 @@ export default function Agregar() {
                     }}
                     style={{ width: '80px', 
                             padding: '0.4rem',
-                            border: '1px solid #ccc'
+                            border: '1px solid #ccc',
+                            borderRadius: '6px',
                     }}
                   />
                 </td>
@@ -118,7 +119,8 @@ export default function Agregar() {
                     }}
                     style={{ width: '100%',
                              padding: '0.4rem',
-                            border: '1px solid #ccc'
+                            border: '1px solid #ccc',
+                            borderRadius: '6px',
                     }}
                   />
                 </td>
