@@ -98,24 +98,40 @@ export default function Agregar() {
           </div>
         )}
 
-        {/* MODAL ÉXITO */}
         {exito && (
-          <div className={styles.overlay} onClick={() => window.location.href = '/'}>
-            <div className={styles.modal} style={{ cursor: "pointer" }}>
+          <div className={styles.overlay}>
+            <div className={styles.modal} style={{ textAlign: "center" }}>
               <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
                 <circle cx="24" cy="24" r="24" fill="#58D68D"/>
                 <path d="M14 25.5L21.5 33L34 18" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               <p style={{ marginTop: 12, fontWeight: 500, fontSize: "18px" }}>
-                Pedido enviado correctamente.<br />
+                Pedido enviado con éxito<br />
                 <span style={{ fontWeight: 400, fontSize: "15px" }}>
                   Número de orden: <b>{exito}</b>
                 </span>
-                <br /><span style={{ color: "#555", fontSize: "13px" }}>(Haz clic para ir al inicio)</span>
               </p>
+              <button
+                onClick={() => window.location.href = '/'}
+                style={{
+                  marginTop: 18,
+                  background: "#0077cc",
+                  color: "#fff",
+                  padding: "0.8rem 2.2rem",
+                  border: "none",
+                  borderRadius: "7px",
+                  fontWeight: 600,
+                  fontSize: "16px",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 7px #c4d8ea80"
+                }}
+              >
+                Ir al inicio
+              </button>
             </div>
           </div>
         )}
+
       <div className={styles.header2}>
         <button className={`${styles.iconBtn2} ${styles.btnAtras2}`} onClick={() => window.location.href = '/'}>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door" viewBox="0 0 16 16">
