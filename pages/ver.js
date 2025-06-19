@@ -152,8 +152,8 @@ export default function VerOrdenes() {
                 <ul>
                   {info.productos.map((prod, i) => (
                     <li key={i} style={{ marginBottom: '0.5rem' }}>
-                      <span style={{ fontWeight: 500 }}>{prod.nombre}</span>
-                      {' - '}{prod.cantidad} {prod.unidad}
+                      <span style={{ fontWeight: 500 }}>{prod.cantidad}</span>
+                      {' - '}{prod.nombre} {prod.unidad}
                       {prod.comentario && (
                         <span style={{ color: '#888' }}> ({prod.comentario})</span>
                       )}

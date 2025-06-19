@@ -66,7 +66,7 @@ export default function Agregar() {
       if (res.ok) {
         const data = await res.json();
         alert('Pedido enviado correctamente. Número de orden: ' + data.numeroOrden);
-        setMateriales([]);
+        setMateriales([{ cantidad: '', producto: '' }]);
         setNombreProyecto('');
       } else {
         alert('Error al enviar el pedido');
