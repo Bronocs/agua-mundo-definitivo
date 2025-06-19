@@ -88,7 +88,7 @@ export default function Agregar() {
         <div className={styles.btnLibre2} style={{ margin: '1rem 0' }}>
         <input
           type="text"
-          placeholder="Nombre del Proyecto"
+          placeholder="Escribir referencia"
           value={nombreProyecto}
           onChange={e => setNombreProyecto(e.target.value)}
           style={{
@@ -99,6 +99,11 @@ export default function Agregar() {
             border: '1px solid #ccc'
           }}
         />
+        <style jsx>{`
+          input::placeholder {
+            font-style: italic;
+          }
+        `}</style>
         </div>
         <button className={`${styles.iconBtn2} ${styles.btnCerrar2}`} onClick={enviarPedidos}>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
