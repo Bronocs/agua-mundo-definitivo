@@ -131,6 +131,7 @@ export default function Agregar() {
                             padding: '0.4rem',
                             border: '1px solid #ccc',
                             borderRadius: '6px',
+                            fontSize: '15px'
                     }}
                   />
                 </td>
