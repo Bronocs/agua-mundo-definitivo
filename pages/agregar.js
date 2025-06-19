@@ -85,7 +85,7 @@ export default function Agregar() {
         </button>
       </div>
 
-      <div style={{ marginTop: '2rem', width: '100%' }}>
+      <div style={{width: '100%' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
@@ -96,7 +96,7 @@ export default function Agregar() {
           <tbody>
             {materiales.map((fila, idx) => (
               <tr key={idx}>
-                <td style={{ padding: '0.3rem' }}>
+                <td style={{ padding: '0.3rem', width: '50px'}}>
                   <input
                     type="text"
                     value={fila.cantidad}
@@ -105,7 +105,7 @@ export default function Agregar() {
                     onKeyDown={e => {
                       if (e.key === 'Enter') e.target.blur();
                     }}
-                    style={{ width: '80px', 
+                    style={{ width: '100%', 
                             padding: '0.4rem',
                             border: '1px solid #ccc',
                             borderRadius: '6px',
@@ -128,7 +128,7 @@ export default function Agregar() {
                              padding: '0.4rem',
                             border: '1px solid #ccc',
                             borderRadius: '6px',
-                            minHeight: '2.2rem',
+                            minHeight: '29.78px',
                             maxHeight: '120px',
                             resize: 'none',          // Opcional: oculta el "tirador"
                             overflowY: 'hidden',
