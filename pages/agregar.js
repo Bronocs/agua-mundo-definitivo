@@ -172,7 +172,7 @@ export default function Agregar() {
           <thead>
             <tr>
               <th style={{ textAlign: 'left', padding: '0.5rem', fontSize: '23px'}}>Cant.</th>
-              <th style={{ textAlign: 'left', padding: '0.5rem', fontSize: '23px' }}>Producto</th>
+              <th style={{ textAlign: 'left', padding: '0.5rem', fontSize: '23px' }}>Producto o Servicio</th>
             </tr>
           </thead>
           <tbody>
