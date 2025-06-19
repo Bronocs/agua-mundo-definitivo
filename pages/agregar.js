@@ -131,6 +131,7 @@ export default function Agregar() {
                             maxHeight: '120px',
                             resize: 'none',          // Opcional: oculta el "tirador"
                             overflowY: 'hidden',
+                            boxSizing: 'border-box'
                     }}
                   />
                 </td>
