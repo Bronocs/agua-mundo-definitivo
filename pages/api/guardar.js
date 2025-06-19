@@ -60,10 +60,10 @@ export default async function handler(req, res) {
       numeroOrden,
       nombreProyecto,
       fechaActual,
-      prod.nombre || '',
-      prod.unidad || '',
+      prod.producto || '',
+      "" || '',
       prod.cantidad || '',
-      prod.comentario || ''
+      "" || ''
     ]);
 
     await sheets.spreadsheets.values.append({

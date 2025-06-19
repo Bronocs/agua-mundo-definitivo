@@ -41,7 +41,7 @@ export default function Agregar() {
     );
 
   // Envía los materiales (ejemplo)
-  const enviarPedidos = () => {
+  const enviarPedidos = async () => {
     const materialesFinal = getMaterialesFinal();
     if (!nombreProyecto.trim()) {
       alert('Por favor, ingresa el nombre del proyecto');
@@ -53,7 +53,28 @@ export default function Agregar() {
     }
     // Aquí tu lógica de envío, por ejemplo usando fetch
 
-    
+    try {
+      const res = await fetch('/api/guardar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombreProyecto,
+          productos: materialesFinal,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        alert('Pedido enviado correctamente. Número de orden: ' + data.numeroOrden);
+        setMateriales([]);
+        setNombreProyecto('');
+      } else {
+        alert('Error al enviar el pedido');
+      }
+    } catch (err) {
+      console.error('Error al enviar:', err);
+      alert('Error de conexión');
+    }
 
     alert(JSON.stringify({ nombreProyecto, productos: materialesFinal }, null, 2));
   };
