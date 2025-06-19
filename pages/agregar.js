@@ -125,7 +125,6 @@ export default function Agregar() {
                       if (e.key === 'Enter') e.target.blur();
                     }}
                     style={{ width: '100%',
-                             padding: '0.4rem',
                             border: '1px solid #ccc',
                             borderRadius: '6px',
                             minHeight: '29.78px',
