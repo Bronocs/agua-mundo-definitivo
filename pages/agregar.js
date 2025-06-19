@@ -154,7 +154,8 @@ export default function Agregar() {
                             resize: 'none',          // Opcional: oculta el "tirador"
                             overflowY: 'hidden',
                             boxSizing: 'border-box',
-                            fontSize: '15px'
+                            fontSize: '15px',
+                            padding: '0.4rem'
                     }}
                   />
                 </td>
