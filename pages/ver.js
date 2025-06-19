@@ -49,14 +49,20 @@ export default function VerOrdenes() {
       : info.estado !== 'entregada'
   );
 
-  // 5. Ordenar por fecha descendente (más recientes primero)
+
+  // 5. Ordenar por fecha+hora descendente (más recientes primero)
   listaOC.sort(([, aInfo], [, bInfo]) => {
-    const parseFecha = str => {
-      const [d, m, y] = str.split('/').map(Number);
-      return new Date(y, m - 1, d).getTime();
+    // aInfo.fecha = "19/6/2025", aInfo.hora = "18:22:07"
+    const toTimestamp = (fecha, hora) => {
+      // Convierte "19/6/2025" y "18:22:07" en Date
+      const [d, m, y] = (fecha || '').split('/').map(Number);
+      const [hh = 0, mm = 0, ss = 0] = (hora || '').split(':').map(Number);
+      if (!y || !m || !d) return 0;
+      return new Date(y, m - 1, d, hh, mm, ss).getTime();
     };
-    return parseFecha(bInfo.fecha) - parseFecha(aInfo.fecha);
+    return toTimestamp(bInfo.fecha, bInfo.hora) - toTimestamp(aInfo.fecha, aInfo.hora);
   });
+
 
   // 6. Cambiar estado de una orden y refrescar lista
   const cambiarEstadoOC = async (numeroOrden, nuevoEstado) => {
