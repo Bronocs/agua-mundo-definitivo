@@ -115,8 +115,8 @@ export default function Agregar() {
                 onClick={() => window.location.href = '/'}
                 style={{
                   marginTop: 18,
-                  background: "#ff6969",
-                  color: "#fc60000",
+                  background: "#003972",
+                  color: "#ffffff",
                   padding: "0.8rem 2.2rem",
                   border: "none",
                   borderRadius: "7px",
