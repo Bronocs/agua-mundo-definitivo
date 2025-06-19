@@ -7,6 +7,11 @@ export default function Agregar() {
   ]);
   const [nombreProyecto, setNombreProyecto] = useState('');
 
+  const [loading, setLoading] = useState(false);
+  const [exito, setExito] = useState(null); // para guardar el número de orden
+
+
+
   // Maneja cambios en los inputs de la tabla
   const handleInputChange = (idx, campo, valor) => {
     const nuevosMateriales = materiales.map((mat, i) =>
@@ -51,8 +56,8 @@ export default function Agregar() {
       alert('Agrega al menos un producto.');
       return;
     }
-    // Aquí tu lógica de envío, por ejemplo usando fetch
 
+    setLoading(true);
     try {
       const res = await fetch('/api/guardar', {
         method: 'POST',
@@ -63,22 +68,54 @@ export default function Agregar() {
         }),
       });
 
+      setLoading(false);
+
       if (res.ok) {
         const data = await res.json();
-        alert('Pedido enviado correctamente. Número de orden: ' + data.numeroOrden);
+        setExito(data.numeroOrden); // activa el modal de éxito
         setMateriales([{ cantidad: '', producto: '' }]);
         setNombreProyecto('');
       } else {
         alert('Error al enviar el pedido');
       }
     } catch (err) {
+      setLoading(false);
       console.error('Error al enviar:', err);
       alert('Error de conexión');
     }
   };
 
+
   return (
     <div className={styles.contenedor}>
+        {/* MODAL CARGANDO */}
+        {loading && (
+          <div className={styles.overlay}>
+            <div className={styles.modal}>
+              <div className={styles.spinner}></div>
+              <p style={{ marginTop: 16 }}>Enviando...</p>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL ÉXITO */}
+        {exito && (
+          <div className={styles.overlay} onClick={() => window.location.href = '/'}>
+            <div className={styles.modal} style={{ cursor: "pointer" }}>
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="24" fill="#58D68D"/>
+                <path d="M14 25.5L21.5 33L34 18" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <p style={{ marginTop: 12, fontWeight: 500, fontSize: "18px" }}>
+                Pedido enviado correctamente.<br />
+                <span style={{ fontWeight: 400, fontSize: "15px" }}>
+                  Número de orden: <b>{exito}</b>
+                </span>
+                <br /><span style={{ color: "#555", fontSize: "13px" }}>(Haz clic para ir al inicio)</span>
+              </p>
+            </div>
+          </div>
+        )}
       <div className={styles.header2}>
         <button className={`${styles.iconBtn2} ${styles.btnAtras2}`} onClick={() => window.location.href = '/'}>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door" viewBox="0 0 16 16">

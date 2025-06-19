@@ -16,7 +16,7 @@ export default function Home() {
           <button>➕ Crear Pedido</button>
         </Link>
         <Link href="/ver">
-          <button>📄 Ver Órdenes</button>
+          <button>📄 Ver Pedidos</button>
         </Link>
       </div>
     </div>
