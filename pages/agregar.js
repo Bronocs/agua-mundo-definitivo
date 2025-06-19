@@ -89,8 +89,8 @@ export default function Agregar() {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
-              <th style={{ textAlign: 'left', padding: '0.5rem' }}>Cantidad</th>
-              <th style={{ textAlign: 'left', padding: '0.5rem' }}>Producto</th>
+              <th style={{ textAlign: 'left', padding: '0.5rem', fontSize: '23px'}}>Cant.</th>
+              <th style={{ textAlign: 'left', padding: '0.5rem', fontSize: '23px' }}>Producto</th>
             </tr>
           </thead>
           <tbody>
