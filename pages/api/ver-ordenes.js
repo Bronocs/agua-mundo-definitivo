@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: process.env.SHEET_PEDIDOS_ID,
-      range: 'Pedidos_web!A2:I',
+      range: 'Pedidos_web!A2:J',
     });
 
     const rows = response.data.values || [];

@@ -75,8 +75,6 @@ export default function Agregar() {
       console.error('Error al enviar:', err);
       alert('Error de conexión');
     }
-
-    alert(JSON.stringify({ nombreProyecto, productos: materialesFinal }, null, 2));
   };
 
   return (

@@ -21,13 +21,14 @@ export default function VerOrdenes() {
   // 3. Agrupar filas por número de orden
   const agrupado = {};
   ordenes.forEach(row => {
-    const [numeroOrden, nombreProyecto, fecha, nombre, unidad, cantidad, comentario, estado, fechaEntrega] = row;
+    const [numeroOrden, nombreProyecto, fecha, hora, nombre, unidad, cantidad, comentario, estado, fechaEntrega] = row;
     const estadoNorm = (estado || '').trim().toLowerCase();
 
     if (!agrupado[numeroOrden]) {
       agrupado[numeroOrden] = {
         proyecto: nombreProyecto,
         fecha,
+        hora,
         estado: estadoNorm,
         fechaEntrega: fechaEntrega || '',
         productos: []
@@ -122,7 +123,7 @@ export default function VerOrdenes() {
               }}
               onClick={() => setAbierto(abierto === idx ? null : idx)}
             >
-              {oc} &nbsp; | &nbsp; {info.proyecto} &nbsp; | &nbsp; {info.fecha}
+              {oc} &nbsp; | &nbsp; {info.proyecto} &nbsp; | &nbsp; {info.fecha} &nbsp; {info.hora}
               <span style={{ float: 'right' }}>
                 <button
                   style={{

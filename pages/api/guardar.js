@@ -55,11 +55,14 @@ export default async function handler(req, res) {
     const spreadsheetId = process.env.SHEET_PEDIDOS_ID;
     const numeroOrden = await generarNumeroOrden(sheets, spreadsheetId);
     const fechaActual = new Date().toLocaleDateString('es-PE');
+    const horaActual = new Date().toLocaleTimeString('es-PE', { hour12: false });
+
 
     const valores = productos.map(prod => [
       numeroOrden,
       nombreProyecto,
       fechaActual,
+      horaActual,
       prod.producto || '',
       "" || '',
       prod.cantidad || '',
@@ -68,7 +71,7 @@ export default async function handler(req, res) {
 
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: 'Pedidos_web!A2:G',
+      range: 'Pedidos_web!A2:H',
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
       requestBody: { values: valores },

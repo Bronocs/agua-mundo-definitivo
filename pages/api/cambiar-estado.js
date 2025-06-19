@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     });
     const sheets = google.sheets({ version: 'v4', auth });
     const spreadsheetId = process.env.SHEET_PEDIDOS_ID;
-    const rango = 'Pedidos_web!A2:I'; // Ahora incluye columna I (índice 8)
+    const rango = 'Pedidos_web!A2:J'; // Ahora incluye columna I (índice 8)
 
     // Leer todos los pedidos
     const response = await sheets.spreadsheets.values.get({
@@ -29,8 +29,8 @@ export default async function handler(req, res) {
     const hoy = new Date().toLocaleDateString('es-PE');
     filas.forEach(fila => {
       if (fila[0] === numeroOrden) {
-        fila[7] = nuevoEstado; // Estado
-        fila[8] = nuevoEstado === "entregada" ? hoy : ""; // Fecha de entrega
+        fila[8] = nuevoEstado; // Estado
+        fila[9] = nuevoEstado === "entregada" ? hoy : ""; // Fecha de entrega
         editadas++;
       }
     });
