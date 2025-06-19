@@ -100,7 +100,6 @@ export default function Agregar() {
                   <input
                     type="text"
                     value={fila.cantidad}
-                    placeholder="Cantidad"
                     onChange={e => handleInputChange(idx, 'cantidad', e.target.value)}
                     onKeyDown={e => {
                       if (e.key === 'Enter') e.target.blur();
@@ -112,10 +111,9 @@ export default function Agregar() {
                     }}
                   />
                 </td>
-                <td style={{ padding: '0.3rem' }}>
+                <td style={{ padding: '0.3rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                   <textarea
                     value={fila.producto}
-                    placeholder="Producto"
                     onChange={e => handleInputChange(idx, 'producto', e.target.value)}
                     onInput={e => {
                       e.target.style.height = 'auto';              // Reset height
