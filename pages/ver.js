@@ -130,7 +130,7 @@ export default function VerOrdenes() {
                     background: info.estado === 'entregada' ? '#F7DC6F' : '#58D68D',
                     color: '#333',
                     border: 'none',
-                    padding: '0.5rem 1rem',
+                    padding: '1.5rem',
                     borderRadius: '4px',
                     fontWeight: 'bold',
                     cursor: 'pointer',

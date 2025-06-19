@@ -126,7 +126,8 @@ export default function Agregar() {
                     onKeyDown={e => {
                       if (e.key === 'Enter') e.target.blur();
                     }}
-                    style={{ width: '100%', 
+                    style={{ width: '100%',
+                            height: '100%', 
                             padding: '0.4rem',
                             border: '1px solid #ccc',
                             borderRadius: '6px',
