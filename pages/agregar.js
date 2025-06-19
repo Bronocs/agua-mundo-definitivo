@@ -52,6 +52,9 @@ export default function Agregar() {
       return;
     }
     // Aquí tu lógica de envío, por ejemplo usando fetch
+
+    
+
     alert(JSON.stringify({ nombreProyecto, productos: materialesFinal }, null, 2));
   };
 
