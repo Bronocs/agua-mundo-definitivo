@@ -127,7 +127,7 @@ export default function Agregar() {
                       if (e.key === 'Enter') e.target.blur();
                     }}
                     style={{ width: '100%',
-                            height: '100%', 
+                            height: '49px', 
                             padding: '0.4rem',
                             border: '1px solid #ccc',
                             borderRadius: '6px',
@@ -154,7 +154,7 @@ export default function Agregar() {
                             overflowY: 'hidden',
                             boxSizing: 'border-box',
                             fontSize: '15px',
-                            padding: '0.4rem'
+                            padding: '0.4rem',
                     }}
                   />
                 </td>
