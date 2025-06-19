@@ -55,7 +55,9 @@ export default async function handler(req, res) {
     const spreadsheetId = process.env.SHEET_PEDIDOS_ID;
     const numeroOrden = await generarNumeroOrden(sheets, spreadsheetId);
     const fechaActual = new Date().toLocaleDateString('es-PE');
-    const horaActual = new Date().toLocaleTimeString('es-PE', { hour12: false });
+    const { DateTime } = require('luxon');
+    const horaActual = DateTime.now().setZone('America/Lima').toFormat('HH:mm:ss');
+
 
 
     const valores = productos.map(prod => [
